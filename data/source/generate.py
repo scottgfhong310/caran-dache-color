@@ -25,7 +25,7 @@ import re
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.1.xlsx")
+XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.2.xlsx")
 OUT = os.path.abspath(os.path.join(HERE, "..", "..", "public", "apps", "caran-dache-color", "data"))
 
 SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC"]

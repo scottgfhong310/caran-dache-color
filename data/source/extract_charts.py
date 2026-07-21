@@ -25,7 +25,7 @@ import fitz  # PyMuPDF
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.1.xlsx")
+XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.2.xlsx")
 if not os.path.exists(XLSX):
     XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.xlsx")
 OUT = os.path.join(HERE, "resampled_hex.json")

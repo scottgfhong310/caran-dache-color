@@ -14,10 +14,12 @@ Caran d’Ache 8 大系列色號 → CSS（hex / `var(--cda-<series>-<code>)` / 
 app.js                                  # Express 入口：port 3000；/ → 302 /apps/caran-dache-color/
                                         # 唯讀，無 API、無上傳（薄後端只做 static + 轉址 + JSON 404）
 data/source/                            # 單一真相（建置期用，不進前端）
-├─ Caran_dAche_Master_Color_Index_v1.0.1.xlsx # 原始總表（13 工作表）
+├─ Caran_dAche_Master_Color_Index_v1.0.2.xlsx # 原始總表（13 工作表；上游最新）
 ├─ generate.py                          # xlsx(+resampled_hex) → 前端三支 cda-*.js（需 openpyxl）
 ├─ extract_charts.py                    # 由官方色卡 PDF 重取 SUP/NC2 真值（需 PyMuPDF；PDF 不進 repo）
-└─ resampled_hex.json                   # extract_charts 產出的 SUP/NC2 修正 hex（generate.py 當 override）
+├─ resampled_hex.json                   # extract_charts 產出的 SUP/NC2 修正 hex（generate.py 當 override）
+└─ build_corrected_xlsx.py              # 把修正套回整份 xlsx → data/reference/…v1.0.2-corrected.xlsx
+data/reference/                         # 可攜「修正版總表」參考檔（＋README）；DESIGN.md §4.1
 public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-color/）
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
 ├─ data/cda-series.js                   # window.CDA_SERIES（8 系列 registry）
@@ -76,7 +78,7 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 | `side-tool.css`（正統 flex 版）| 家族 §5.5 正統版（複製自 `faber-castell-color`） |
 | `filter-clear.css`、`filter-clear.js` | 家族 §5.12 篩選框「清除」× 鈕 utility（自 `faber-castell-color` 複製、byte-identical） |
 | `i18n.js` | 家族共用（`markdown-reader` 等同款引擎） |
-| `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.0.1.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
+| `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.0.2.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
 
 > 為什麼長這樣（唯讀決策、資料來源與雙軸模型、跨系列色帶、色名顯示、CSS 單一真相、色票不著色）
 > 見 [DESIGN.md](DESIGN.md)。

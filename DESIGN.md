@@ -65,19 +65,19 @@ UI 明細與匯出 CSS 檔頭都聲明此限制。
 
 ### 4.1 已知來源修正（source corrections）
 
-總表有兩類抽取錯誤。**單一真相是總表 xlsx**（現用 `v1.0.1`），修正一律以**具名、可稽核、可重跑**的方式
+總表有兩類抽取錯誤。**單一真相是總表 xlsx**（現用 `v1.0.2`），修正一律以**具名、可稽核、可重跑**的方式
 疊在產生器上——不手改二進位 xlsx、也不手改烘出的 JS。上游修好即可移除對應修正。
 
-**（甲）兩筆 Luminance `#FFFFFF`（已由上游 v1.0.1 修掉）**：`v1.0` 把 `LUM 009 Black`、`LUM 639 Dark indigo`
-的 `css_hex_approx` 記成純白（三張表一致錯白、抽取失敗落回白），還污染正典層（009 avg 被拉成 `#838280`、
-639 avg 直接白）。owner 換上的 **`v1.0.1` 已修**（009→`#202021`、639→`#222427`，並重算正典層）。本 repo 遂
-改以 `v1.0.1` 為來源，原本我方臨時的 Luminance override **已移除**（不再需要）。
+**（甲）個別黑/白色塊（已由上游修掉）**：`v1.0` 把 `LUM 009 Black`、`LUM 639 Dark indigo` 的 `css_hex_approx`
+記成純白（三張表一致錯白、污染正典層）；上游 **`v1.0.1` 修這兩筆**（009→`#202021`、639→`#222427`），
+**`v1.0.2` 再補 3 顆黑**（NC2 008→`#474C51`、NC2 009→`#393937`、SUP 009→`#323333`——其 SUP/NC2 黑值與我方
+獨立重取吻合，互相印證）。本 repo 遂以 **`v1.0.2` 為來源**，我方臨時的 Luminance override 早已移除。
 
 **（乙）SUP／NC2 兩整系列系統性偏白（本 repo 修正）**：把每個系列逐一對**官方色卡 PDF** 像素比對後發現，
-`SUP`（Supracolor，120 色）與 `NC2`（Neocolor II，84 色）的 hex **全系列系統性偏淡/偏白**（非只黑色）——
-例：SUP 169 Marine blue 存成 `#57C9EB`（淺天藍）實為 `#02599f`（深藍）、NC2 220 Grass green 存成
-`#D5E6CA` 實為 `#179734`。方法可信度以**對照組**證實：同一支像素取樣器，`PAB`／`NEO`／`PSTP` 對到官方色卡
-ΔE76 僅 **4–7**（總表準），`SUP`／`NC2` 卻差 **31–37**（總表錯）。
+`SUP`（Supracolor，120 色）與 `NC2`（Neocolor II，84 色）的 hex **全系列系統性偏淡/偏白**（非只黑色；
+上游 v1.0.2 只補了 3 顆黑，**沒補整系列**）——例：SUP 169 Marine blue 存成 `#57C9EB`（淺天藍）實為
+`#02599f`（深藍）、NC2 220 Grass green 存成 `#D5E6CA` 實為 `#179734`。方法可信度以**對照組**證實：同一支
+像素取樣器，`PAB`／`NEO`／`PSTP` 對到官方色卡 ΔE76 僅 **4–7**（總表準），`SUP`／`NC2` 卻差 **31–37**（總表錯）。
 
 - **重取管線＝`extract_charts.py`**：讀外部官方色卡 PDF（`Colour_Chart_Supracolor-BD3.pdf`／
   `Colour_Chart_NeocolorII_841.pdf`），對每個色碼**定位標籤→取其上方色塊核心的中位數**（fixed-window，
@@ -91,6 +91,10 @@ UI 明細與匯出 CSS 檔頭都聲明此限制。
 - **要更新**：`cd data/source && python3 extract_charts.py`（重取，需 openpyxl＋PyMuPDF＋外部 PDF）→
   `python3 generate.py`（重烘）。上游若出把 SUP／NC2 修好的版本，刪 `resampled_hex.json`＋`extract_charts.py`
   相關即可。
+
+**修正版總表（可攜參考檔）**：`data/source/build_corrected_xlsx.py` 把上述修正套回**整份 xlsx**（v1.0.2 為底、
+逐 sheet 一致重算），產出 `data/reference/Caran_dAche_Master_Color_Index_v1.0.2-corrected.xlsx`（＋該夾 README）——
+與原總表同 13-sheet 形態、可當權威參考檔（**非官方**，openpyxl 重存會簡化條件式格式/儀表板，資料為準）。
 
 ## 5. 色名：英文正典為主、在地色名為輔（家族「資料不翻譯」的正確詮釋）
 
