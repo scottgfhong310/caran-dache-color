@@ -65,23 +65,32 @@ UI 明細與匯出 CSS 檔頭都聲明此限制。
 
 ### 4.1 已知來源修正（source corrections）
 
-v1.0 總表有**兩筆 Luminance 抽取錯誤**：`LUM 009 Black` 與 `LUM 639 Dark indigo` 的 `css_hex_approx`
-都被記成 **`#FFFFFF`（純白）**——三張表（`Series_Color_Index`／`Cross_Series_Map`／`Swatch_Reference`）
-一致錯白，顯是抽取失敗落回白色（一支黑色鉛筆／深靛色不可能是白）。此錯還污染了正典層：009 的跨系列
-平均被拉成 `#838280`、639（僅 LUM 一系）平均直接是 `#FFFFFF`。
+總表有兩類抽取錯誤。**單一真相是總表 xlsx**（現用 `v1.0.1`），修正一律以**具名、可稽核、可重跑**的方式
+疊在產生器上——不手改二進位 xlsx、也不手改烘出的 JS。上游修好即可移除對應修正。
 
-**修法＝產生器的具名修正層**（`generate.py` 的 `HEX_OVERRIDES`），不手改二進位 xlsx、也不手改烘出的 JS：
+**（甲）兩筆 Luminance `#FFFFFF`（已由上游 v1.0.1 修掉）**：`v1.0` 把 `LUM 009 Black`、`LUM 639 Dark indigo`
+的 `css_hex_approx` 記成純白（三張表一致錯白、抽取失敗落回白），還污染正典層（009 avg 被拉成 `#838280`、
+639 avg 直接白）。owner 換上的 **`v1.0.1` 已修**（009→`#202021`、639→`#222427`，並重算正典層）。本 repo 遂
+改以 `v1.0.1` 為來源，原本我方臨時的 Luminance override **已移除**（不再需要）。
 
-- 用**官方 Luminance 6901 色卡**（`My Files/CARAN D'ACHE/nuancier_luminance_fr.pdf`）以 PyMuPDF
-  **中位數像素取樣**重取兩張色塊真值——與總表自稱的「median RGB from official PDF」同法。取樣以已知色塊
-  校準（001 White→`#f2f1f6`、004 Steel→`#90a3b1`、070 Scarlet→紅），得 **009 Black＝`#111113`**、
-  **639 Dark indigo＝`#201f24`**。
-- override 一併套進 `Series_Color_Index`（修 hex＋rgb、加 `note` 溯源）與 `Cross_Series_Map`（修 LUM 格）；
-  受影響的正典碼**重算** `avgHex`／`maxDeltaE76`／`consistency`（自修正後的各系列值，一致性門檻依總表既有
-  分布 High<10／Medium<25／Low 回推）。009 重算後 avg `#5c5b5a`、ΔE76≈75（仍 Low，黑色跨媒材本就差異大）；
-  639 avg `#201f24`、ΔE76 0、High。
-- 兩筆的明細會顯示 `note`（英文溯源字串，屬資料），說明「原始為 #FFFFFF、已自官方色卡重取」。
-- **新錯誤照此模式加一列 override 即可**（單一具名清單、可稽核、可重跑）。上游若出 v1.1 修好，移除對應列即可。
+**（乙）SUP／NC2 兩整系列系統性偏白（本 repo 修正）**：把每個系列逐一對**官方色卡 PDF** 像素比對後發現，
+`SUP`（Supracolor，120 色）與 `NC2`（Neocolor II，84 色）的 hex **全系列系統性偏淡/偏白**（非只黑色）——
+例：SUP 169 Marine blue 存成 `#57C9EB`（淺天藍）實為 `#02599f`（深藍）、NC2 220 Grass green 存成
+`#D5E6CA` 實為 `#179734`。方法可信度以**對照組**證實：同一支像素取樣器，`PAB`／`NEO`／`PSTP` 對到官方色卡
+ΔE76 僅 **4–7**（總表準），`SUP`／`NC2` 卻差 **31–37**（總表錯）。
+
+- **重取管線＝`extract_charts.py`**：讀外部官方色卡 PDF（`Colour_Chart_Supracolor-BD3.pdf`／
+  `Colour_Chart_NeocolorII_841.pdf`），對每個色碼**定位標籤→取其上方色塊核心的中位數**（fixed-window，
+  非「最長均勻帶」——後者會誤抓白背景，已驗證捨棄）。輸出小檔 **`resampled_hex.json`**（僅修正後 hex，
+  進版控；官方 PDF 本身不進 repo）。`generate.py` 載入它當 override 層。
+- **只修 SUP／NC2**：`MUS`（Museum，ΔE76≈13）方向相反（我取到的比總表**更淡**——像是讀到水彩淡塗帶），
+  差異也小，**維持總表值**、不動。`PAB/NEO/PSTP/PSTC/LUM` 準，維持總表值。
+- override 套進 `Series_Color_Index`（修 hex＋rgb、加 `note` 溯源）與 `Cross_Series_Map`；**凡含 SUP 或 NC2 的
+  正典碼**（幾乎全部）都**重算** `avgHex`／`maxDeltaE76`／`consistency`（自修正後各系列值；一致性門檻依總表
+  既有分布 High<10／Medium<25／Low 回推）。共 **204 筆**系列色帶溯源 `note`。
+- **要更新**：`cd data/source && python3 extract_charts.py`（重取，需 openpyxl＋PyMuPDF＋外部 PDF）→
+  `python3 generate.py`（重烘）。上游若出把 SUP／NC2 修好的版本，刪 `resampled_hex.json`＋`extract_charts.py`
+  相關即可。
 
 ## 5. 色名：英文正典為主、在地色名為輔（家族「資料不翻譯」的正確詮釋）
 

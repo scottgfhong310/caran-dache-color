@@ -25,25 +25,39 @@ import re
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.xlsx")
+XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.1.xlsx")
 OUT = os.path.abspath(os.path.join(HERE, "..", "..", "public", "apps", "caran-dache-color", "data"))
 
 SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC"]
 
-# --- Known source-data corrections (documented; see DESIGN.md §"source corrections") -------
-# The v1.0 master index recorded two Luminance swatches as #FFFFFF (a failed extraction:
-# a Black and a Dark indigo came out pure white in Series_Color_Index / Cross_Series_Map /
-# Swatch_Reference alike). Re-sampled the real swatches from the official Luminance 6901
-# colour chart (My Files/CARAN D'ACHE/nuancier_luminance_fr.pdf) by median pixel sampling
-# of the swatch core — the same "median RGB from official PDF" method the source claims.
-# Calibrated against known swatches (001 White→#f2f1f6, 004 Steel→#90a3b1, 070 Scarlet→red).
-HEX_OVERRIDES = {
-    ("LUM", "009"): ("#111113", "corrected: source hex was #FFFFFF (extraction error); "
-                                 "re-sampled from the official Luminance 6901 colour chart"),
-    ("LUM", "639"): ("#201f24", "corrected: source hex was #FFFFFF (extraction error); "
-                                 "re-sampled from the official Luminance 6901 colour chart"),
+# --- Corrections applied on top of the source master index (documented; DESIGN.md §4.1) ----
+# The SUP (Supracolor) and NC2 (Neocolor II) series are systematically mis-extracted in the
+# master index — recorded far too pale/washed-out (verified vs the official chart PDFs: with
+# the same pixel-sampling method, PAB/NEO/PSTP matched at ΔE76 4–7, but SUP/NC2 were off by
+# ~31–37). extract_charts.py re-samples both whole series from the official Supracolor /
+# Neocolor II charts; resampled_hex.json holds the corrected per-code hex. (The earlier two
+# Luminance #FFFFFF swatches — 009 Black, 639 Dark indigo — were fixed upstream in v1.0.1,
+# so no manual Luminance override is needed here.)
+_RESAMPLED = {}
+_NOTE = {
+    "SUP": "corrected: the Supracolor series was recorded too pale in the source; "
+           "re-sampled from the official Supracolor colour chart",
+    "NC2": "corrected: the Neocolor II series was recorded too pale in the source; "
+           "re-sampled from the official Neocolor II colour chart",
 }
-_OVERRIDDEN_CODES = {code for (_sid, code) in HEX_OVERRIDES}
+_rp = os.path.join(HERE, "resampled_hex.json")
+if os.path.exists(_rp):
+    with open(_rp, encoding="utf-8") as _f:
+        for _sid, _m in json.load(_f).get("hex", {}).items():
+            for _code, _hex in _m.items():
+                _RESAMPLED[(_sid, _code)] = (_hex, _NOTE.get(_sid, "corrected: re-sampled from official chart"))
+
+
+def override_for(sid, code):
+    return _RESAMPLED.get((sid, code))
+
+
+_OVERRIDDEN_CODES = {code for (_sid, code) in _RESAMPLED}
 
 
 def _rgb_of(hexv):
@@ -161,7 +175,7 @@ def main():
         hexv = hexnorm(col(cidx, r, "css_hex_approx"))
         if not (sid and code and hexv):
             continue
-        override = HEX_OVERRIDES.get((sid, code))
+        override = override_for(sid, code)
         note = None
         if override:
             hexv, note = override[0], override[1]
@@ -200,7 +214,7 @@ def main():
         per = {}
         for sid in SERIES_ORDER:
             h = hexnorm(col(xidx, r, sid))
-            override = HEX_OVERRIDES.get((sid, code))
+            override = override_for(sid, code)
             if override:
                 h = override[0]
             if h:
@@ -228,8 +242,8 @@ def main():
             "series": cross.get(code) or None,
         }
         # Recompute the affected canonical rows from the corrected per-series hexes so the
-        # cross-series average / ΔE76 / consistency reflect the fix (source values here were
-        # polluted by the #FFFFFF error: e.g. 009's avg was #838280, 639's avg was #FFFFFF).
+        # cross-series average / ΔE76 / consistency reflect the corrections (the source values
+        # here were polluted by the mis-extracted SUP/NC2 pale hexes).
         if code in _OVERRIDDEN_CODES and c["series"]:
             hexes = list(c["series"].values())
             rs = [_rgb_of(h) for h in hexes]
@@ -241,8 +255,8 @@ def main():
                          default=0.0)
             c["maxDeltaE76"] = round(max_de, 2)
             c["consistency"] = _consistency(max_de)
-            c["note"] = ("cross-series average recomputed after correcting a Luminance swatch "
-                         "recorded as #FFFFFF in the source (see series-colour note)")
+            c["note"] = ("cross-series average recomputed after correcting mis-extracted "
+                         "series values in the source (see series-colour note)")
         canonical.append({k: v for k, v in c.items() if v is not None})
 
     # ---- META --------------------------------------------------------------
