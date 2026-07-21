@@ -182,7 +182,7 @@
     $('#detail-tag').text(sName);
     $('#detail-name').text(c.name || '');
     var loc = locName(c); $('#detail-name-loc').text(loc).toggle(!!loc);
-    $('#detail-note').text(T('note.approx'));
+    $('#detail-note').text(T('note.approx') + (c.note ? '  ·  ' + c.note : ''));
 
     $('#detail-copy').html(SERIES_COPY.map(function (fmt) {
       return '<button class="copy-btn" data-fmt="' + fmt + '">' +
@@ -223,7 +223,7 @@
     $('#detail-tag').text(T('detail.canonTag', { n: c.seriesCount || 0 }));
     $('#detail-name').text(c.name || '');
     var loc = locName(c); $('#detail-name-loc').text(loc).toggle(!!loc);
-    $('#detail-note').text(T('note.avg'));
+    $('#detail-note').text(T('note.avg') + (c.note ? '  ·  ' + c.note : ''));
 
     $('#detail-copy').html(CANON_COPY.map(function (fmt) {
       return '<button class="copy-btn" data-fmt="' + fmt + '">' +

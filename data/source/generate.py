@@ -30,6 +30,50 @@ OUT = os.path.abspath(os.path.join(HERE, "..", "..", "public", "apps", "caran-da
 
 SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC"]
 
+# --- Known source-data corrections (documented; see DESIGN.md §"source corrections") -------
+# The v1.0 master index recorded two Luminance swatches as #FFFFFF (a failed extraction:
+# a Black and a Dark indigo came out pure white in Series_Color_Index / Cross_Series_Map /
+# Swatch_Reference alike). Re-sampled the real swatches from the official Luminance 6901
+# colour chart (My Files/CARAN D'ACHE/nuancier_luminance_fr.pdf) by median pixel sampling
+# of the swatch core — the same "median RGB from official PDF" method the source claims.
+# Calibrated against known swatches (001 White→#f2f1f6, 004 Steel→#90a3b1, 070 Scarlet→red).
+HEX_OVERRIDES = {
+    ("LUM", "009"): ("#111113", "corrected: source hex was #FFFFFF (extraction error); "
+                                 "re-sampled from the official Luminance 6901 colour chart"),
+    ("LUM", "639"): ("#201f24", "corrected: source hex was #FFFFFF (extraction error); "
+                                 "re-sampled from the official Luminance 6901 colour chart"),
+}
+_OVERRIDDEN_CODES = {code for (_sid, code) in HEX_OVERRIDES}
+
+
+def _rgb_of(hexv):
+    return int(hexv[1:3], 16), int(hexv[3:5], 16), int(hexv[5:7], 16)
+
+
+def _lab(r, g, b):
+    def lin(c):
+        c /= 255.0
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    R, G, B = lin(r), lin(g), lin(b)
+    X = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047
+    Y = (R * 0.2126 + G * 0.7152 + B * 0.0722)
+    Z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883
+
+    def f(t):
+        return t ** (1 / 3.0) if t > 0.008856 else (7.787 * t + 16 / 116.0)
+    fx, fy, fz = f(X), f(Y), f(Z)
+    return (116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz))
+
+
+def _de76(h1, h2):
+    l1 = _lab(*_rgb_of(h1))
+    l2 = _lab(*_rgb_of(h2))
+    return sum((a - b) ** 2 for a, b in zip(l1, l2)) ** 0.5
+
+
+def _consistency(max_de):
+    return "High" if max_de < 10 else "Medium" if max_de < 25 else "Low"
+
 
 def s(v):
     """Trim to clean string, or None for empty / dash placeholders."""
@@ -117,8 +161,11 @@ def main():
         hexv = hexnorm(col(cidx, r, "css_hex_approx"))
         if not (sid and code and hexv):
             continue
-        rgb = hexnorm(col(cidx, r, "css_hex_approx"))
-        R = int(rgb[1:3], 16); G = int(rgb[3:5], 16); B = int(rgb[5:7], 16)
+        override = HEX_OVERRIDES.get((sid, code))
+        note = None
+        if override:
+            hexv, note = override[0], override[1]
+        R, G, B = _rgb_of(hexv)
         c = {
             "id": s(col(cidx, r, "series_color_id")),
             "seriesId": sid,
@@ -139,6 +186,7 @@ def main():
             "contrast": num(col(cidx, r, "best_contrast_ratio")),
             "canon": s(col(cidx, r, "canonical_code_id")),
             "cssVar": s(col(cidx, r, "css_variable")),
+            "note": note,
         }
         colors.append({k: v for k, v in c.items() if v is not None})
 
@@ -152,6 +200,9 @@ def main():
         per = {}
         for sid in SERIES_ORDER:
             h = hexnorm(col(xidx, r, sid))
+            override = HEX_OVERRIDES.get((sid, code))
+            if override:
+                h = override[0]
             if h:
                 per[sid] = h
         cross[code] = per
@@ -176,6 +227,22 @@ def main():
             "consistency": s(col(midx, r, "cross_series_consistency")),
             "series": cross.get(code) or None,
         }
+        # Recompute the affected canonical rows from the corrected per-series hexes so the
+        # cross-series average / ΔE76 / consistency reflect the fix (source values here were
+        # polluted by the #FFFFFF error: e.g. 009's avg was #838280, 639's avg was #FFFFFF).
+        if code in _OVERRIDDEN_CODES and c["series"]:
+            hexes = list(c["series"].values())
+            rs = [_rgb_of(h) for h in hexes]
+            ra = round(sum(x[0] for x in rs) / len(rs))
+            ga = round(sum(x[1] for x in rs) / len(rs))
+            ba = round(sum(x[2] for x in rs) / len(rs))
+            c["avgHex"] = "#%02x%02x%02x" % (ra, ga, ba)
+            max_de = max((_de76(a, b) for i, a in enumerate(hexes) for b in hexes[i + 1:]),
+                         default=0.0)
+            c["maxDeltaE76"] = round(max_de, 2)
+            c["consistency"] = _consistency(max_de)
+            c["note"] = ("cross-series average recomputed after correcting a Luminance swatch "
+                         "recorded as #FFFFFF in the source (see series-colour note)")
         canonical.append({k: v for k, v in c.items() if v is not None})
 
     # ---- META --------------------------------------------------------------
