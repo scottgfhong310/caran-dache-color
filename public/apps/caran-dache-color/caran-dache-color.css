@@ -49,6 +49,13 @@ main { min-height: 100vh; }
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   margin-bottom: 14px;
 }
+.topbar-head { display: flex; align-items: center; gap: 12px; }
+.title-icon {
+  flex: 0 0 auto; width: 38px; height: 38px;
+  background: url('./icons/caran-dache-color-icon.svg') center / contain no-repeat;
+  user-select: none;
+}
+[data-theme="light"] .title-icon { background-image: url('./icons/caran-dache-color-icon-light.svg'); }
 .topbar h1 { font-size: 1.28rem; font-weight: 500; margin: 0; color: var(--text); }
 .topbar .sub { font-size: .82rem; color: var(--muted); margin-top: 2px; }
 .search-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; position: relative; }

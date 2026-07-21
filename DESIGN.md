@@ -92,9 +92,23 @@ FC 的 `--fc-NNN` 因色碼在單一線內唯一即可。Caran d’Ache **同色
 `css_variable` 欄）。`buildCss` 為 764 個系列色各出一個變數 ＋ `.cda-color-<slug>` / `.cda-bg-<slug>`
 utility（`slug` = `lum-001`）。正典層無自己的變數（是平均色、非可買到的實體色），故明細只提供 hex/rgb 複製。
 
-## 8. 未做的（已知範圍，非缺陷）
+## 8. App icon（中性色卡標記、非品牌 logo）
 
-- **無自訂 app icon / favicon set**：比照近親 `faber-castell-color`（亦未附）先不做；日後補則照 §5.5 checklist，
-  用**中性的色卡索引標記、不用 Caran d’Ache 品牌 logo**（避免冒用商標）。
+自訂 icon 是一個**中性的「色卡扇」標記**——三張扇開的圓角色卡（暖琥珀／莓紅／藍），讀作「一疊色票／
+色卡本」，同時暗合本 app「同一色碼在各系列扇開成一排」的跨系列概念。**刻意不用 Caran d’Ache 品牌 logo**
+（避免冒用商標，§5.5／DESIGN_GUIDELINES）；也刻意與 `color-palette`（金環＋玫瑰放大鏡）區隔。
+
+- **多色而非單色**：色卡本身是彩色比單色更直說「這是關於顏色的 app」；三張卡的色相各異＝「一組顏色」。
+- **兩張母版 SVG**（`icons/caran-dache-color-icon.svg` 深 tile／`-light.svg` 淺 tile＋hairline），
+  favicon 深淺兩版（跟 OS `prefers-color-scheme`）＋ `.ico`／PNG（16–512）＋ apple-touch 180 ＋ PWA manifest
+  （192/512＋maskable）＋ `theme-color` = 頁面深底 `#0f1115`（非 icon 色）。全照 §5.5 checklist。
+- **露出點**：favicon／PWA／apple-touch，＋（乙式）**標題列品牌標記**（h1 前一枚 tile，隨 `[data-theme]`
+  切深/淺母版）。**未用（甲式）側鍵徽章**——本 app 側鍵首顆是 `#setting-sort`（功能鍵，不宜改成 logo），
+  §5.5 明言不新增「不做事」的 icon，故品牌只走標題列與 favicon。
+- **PNG 光柵化**：本機無 cairo（cairosvg／renderPM 皆需要），改以**瀏覽器 canvas** 把母版 SVG 畫成各尺寸
+  PNG（見產出當時的臨時 `_iconmaker.html` 與一支 sink server；皆為一次性、未留在 repo）。
+
+## 9. 未做的（已知範圍，非缺陷）
+
 - **v1 無 `nearestCDA` 比對器**（見 §6）。
 - **只三語色名**（en/zh/ja）進前端；其餘六語在總表、未烘。
