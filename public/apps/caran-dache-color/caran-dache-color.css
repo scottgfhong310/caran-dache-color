@@ -1,0 +1,214 @@
+/* caran-dache-color — 本頁樣式 + 主題 token（§5.1）
+ * Materialize 元件深色交給 materialize-dark.css；此檔只管非 Materialize 的自訂元素。
+ * 注意：色票（.cda-swatch）保留 Caran d’Ache 真實顏色，不隨主題重著色（比照 §4.7「內容本身即設計」）。
+ */
+
+/* ===== 主題 token（light / dark，預設 dark） ===== */
+:root, [data-theme="dark"] {
+  --bg:#0f1115; --surface:#161a22; --surface-2:#1b2030;
+  --text:#e8eaf0; --muted:#a8b0c0; --border:rgba(255,255,255,.12);
+  --accent:#90caf9; --card-bg:#0f1115;
+  --tool-bg:#1b2030; --tool-fg:#e8eaf0;
+  --overlay:rgba(10,14,22,.84); --drop-border:#3a4252;
+}
+[data-theme="light"] {
+  --bg:#f6f8fa; --surface:#fff; --surface-2:#eef1f5;
+  --text:#1f2328; --muted:#57606a; --border:rgba(0,0,0,.12);
+  --accent:#0969da; --card-bg:#fff;
+  --tool-bg:#fff; --tool-fg:#1f2328;
+  --overlay:rgba(240,243,247,.86); --drop-border:#c4ccd6;
+}
+
+/* 讓 Materialize 元件（modal / btn-flat / input…）跟隨 app 的 --accent（而非 teal） */
+html.dark-mode, html.light-mode {
+  --mz-primary: var(--accent);
+  --mz-focus: var(--accent);
+  --mz-surface: var(--surface);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+  min-height: 100vh;
+}
+main { min-height: 100vh; }
+
+.app-container {
+  width: 92%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 0 72px;
+}
+
+/* ===== 頂部：標題 + 搜尋 + 計數 ===== */
+.topbar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.topbar h1 { font-size: 1.28rem; font-weight: 500; margin: 0; color: var(--text); }
+.topbar .sub { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+.search-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; position: relative; }
+.search-wrap i.material-icons { color: var(--muted); font-size: 20px; }
+#search {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+  height: 38px; padding: 0 12px; width: 240px; font-size: .9rem;
+  outline: none; transition: border-color .15s;
+}
+#search:focus { border-color: var(--accent); }
+.count { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+
+/* ===== 模式切換 + 系列 chips ===== */
+.navbar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.mode-toggle {
+  display: inline-flex; border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; background: var(--surface); flex: 0 0 auto;
+}
+.mode-btn {
+  border: none; background: transparent; color: var(--muted);
+  padding: 7px 14px; font-size: .84rem; cursor: pointer; line-height: 1.2;
+  transition: background .15s, color .15s;
+}
+.mode-btn + .mode-btn { border-left: 1px solid var(--border); }
+.mode-btn:hover { color: var(--text); }
+.mode-btn.active { background: var(--accent); color: #fff; }
+
+.series-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.series-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: auto; line-height: 1.2; border-radius: 9px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); padding: 6px 10px;
+  font-size: .8rem; cursor: pointer; margin: 0;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.series-chip:hover { border-color: var(--accent); }
+.series-chip.active { border-color: var(--accent); background: var(--surface-2); color: var(--text); }
+.series-chip .sid { font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .3px; }
+.series-chip .scount { font-size: .7rem; color: var(--muted); font-family: ui-monospace, monospace; }
+.series-chip.active .sid { color: var(--accent); }
+
+/* ===== 色票網格 ===== */
+.cda-list { display: block; }
+.cda-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 10px;
+}
+
+/* ===== 色系分群 + sticky 標頭（family 排序模式） ===== */
+.cda-group + .cda-group { margin-top: 10px; }
+.cda-group-head {
+  position: sticky; top: 0; z-index: 5;
+  margin: 0 0 10px; padding: 8px 2px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  font-size: .95rem; font-weight: 500; color: var(--text);
+}
+.cda-group-n {
+  font-size: .78rem; font-weight: 400; color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cda-cell {
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  background: var(--card-bg); cursor: pointer;
+  transition: transform .1s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.cda-cell:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.22); border-color: var(--accent); }
+.cda-swatch {
+  height: 66px; display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 6px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cda-swatch .code { font-size: .82rem; font-weight: 600; }
+.cda-swatch .badge {
+  font-size: .68rem; opacity: .9; font-weight: 600;
+  border: 1px solid currentColor; border-radius: 20px; padding: 0 5px; line-height: 1.5;
+}   /* 正典模式：涵蓋幾個系列 */
+
+/* 色塊上的號碼/標記：前景固定用 pickTextColor（依色塊自身相對亮度算）的值，與主題無關。
+ * color:inherit 從 inline 前景繼承、並以較高特異度蓋過 materialize-dark.css 對裸 <span>
+ * 設的 color:var(--mz-text)——否則在淺色塊上會看不見（DESIGN.md）。 */
+.cda-swatch .code, .cda-swatch .badge,
+.detail-head .d-code, .detail-head .d-tag,
+.cross-item .cs-sid, .cross-item .cs-hex { color: inherit; }
+.cda-meta { padding: 7px 10px 9px; }
+.cda-meta .name { font-size: .8rem; color: var(--text); line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cda-meta .hex { font-size: .72rem; color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.no-result { text-align: center; color: var(--muted); padding: 48px 0; }
+
+/* ===== 明細 Modal ===== */
+.detail-modal { border-radius: 14px; max-width: 560px; }
+.detail-modal .modal-content { padding: 0; }
+.detail-head {
+  height: 120px; display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 14px 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.detail-head .d-code { font-size: 1.3rem; font-weight: 600; }
+.detail-head .d-tag { font-size: .82rem; opacity: .92; text-align: right; }
+.detail-body { padding: 16px 20px 6px; }
+.detail-body .d-name { font-size: 1.05rem; font-weight: 500; color: var(--text); }
+.detail-body .d-name-loc { font-size: .86rem; color: var(--muted); margin-top: 1px; }
+.detail-body .d-note { font-size: .74rem; color: var(--muted); margin: 6px 0 12px; }
+
+/* 複製鈕列 */
+.copy-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 9px;
+  background: var(--surface); color: var(--text);
+  padding: 7px 11px; font-size: .82rem; cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.copy-btn:hover { border-color: var(--accent); }
+.copy-btn.copied { border-color: #37b26b; color: #37b26b; }
+.copy-btn .material-icons { font-size: 16px; }
+
+/* 明細裡的區塊（事實表 / 跨系列） */
+.d-section { margin: 12px 0; }
+.d-section h6 { font-size: .82rem; color: var(--muted); font-weight: 500; margin: 0 0 8px; text-transform: none; }
+.facts-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.facts-table td { padding: 5px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.facts-table td.fk { color: var(--muted); white-space: nowrap; width: 34%; }
+.facts-table td.fv { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* 同色碼跨系列色帶 */
+.cross-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+.cross-item {
+  display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: space-between;
+  min-width: 66px; height: 48px; padding: 5px 7px;
+  border: 1px solid var(--border); border-radius: 9px; cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: transform .1s, box-shadow .15s;
+}
+.cross-item:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.24); }
+.cross-item.here { outline: 2px solid var(--accent); outline-offset: 1px; }
+.cross-item .cs-sid { font-size: .72rem; font-weight: 600; letter-spacing: .3px; }
+.cross-item .cs-hex { font-size: .64rem; opacity: .9; }
+.cross-note { font-size: .74rem; color: var(--muted); margin-top: 8px; }
+
+/* ===== CSS 匯出 Modal ===== */
+.css-modal { border-radius: 14px; max-width: 720px; }
+.css-modal .modal-content h5 { font-size: 1.05rem; font-weight: 500; }
+.css-modal pre {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; max-height: 46vh; overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem;
+  line-height: 1.5; color: var(--text); white-space: pre;
+}
+.css-modal .css-sub { font-size: .8rem; color: var(--muted); margin: 4px 0 10px; }
+
+@media (max-width: 600px) {
+  #search { width: 150px; }
+  .topbar, .navbar { gap: 10px; }
+}

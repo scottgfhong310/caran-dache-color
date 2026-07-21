@@ -1,0 +1,27 @@
+{
+  "name": "caran-dache-color",
+  "version": "1.0.0",
+  "description": "Caran d’Ache 8 大系列色號 → CSS（hex / var / rgb / utility class）對照的單頁參考 WebApp：色票網格、系列/正典雙軸瀏覽、同色碼跨系列對照、搜尋、一鍵複製、整份 .css 匯出，支援 light/dark 與三語。",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "caran-dache",
+    "color",
+    "colour",
+    "css",
+    "palette",
+    "luminance",
+    "pablo",
+    "supracolor",
+    "reference",
+    "express",
+    "materialize"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}
