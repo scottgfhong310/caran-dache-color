@@ -88,8 +88,13 @@ UI 明細與匯出 CSS 檔頭都聲明此限制。
   `Colour_Chart_NeocolorII_841.pdf`），對每個色碼**定位標籤→取其上方色塊核心的中位數**（fixed-window，
   非「最長均勻帶」——後者會誤抓白背景，已驗證捨棄）。輸出小檔 **`resampled_hex.json`**（僅修正後 hex，
   進版控；官方 PDF 本身不進 repo）。`generate.py` 載入它當 override 層。
-- **只修 SUP／NC2**：`MUS`（Museum，ΔE76≈13）方向相反（我取到的比總表**更淡**——像是讀到水彩淡塗帶），
-  差異也小，**維持總表值**、不動。`PAB/NEO/PSTP/PSTC/LUM` 準，維持總表值。
+- **只修 SUP／NC2；MUS 刻意不動（水彩淡塗本質）**：`MUS`（Museum Aquarelle）是**水彩**色鉛筆，色卡swatch是
+  **淡塗漸層**（light→saturated），**沒有單一真 hex**。三來源交叉比對證實此點——同一批 tell-tale 色在
+  專屬 Museum 色卡／總表／2025 目錄密端各取到**不同濃度且方向不一**（如 009 Black：專屬 `#aaa6a7` 淺灰／
+  總表 `#696969` 中灰／目錄密端 `#252527` 深；Prussian Blue：`#33587e`／`#507fac`／`#003457`），且淡塗小點
+  取樣**不可靠**（目錄 Saffron 取成紅、Black 取成灰）。這與 SUP/NC2（實心色塊、系統性偏白 ΔE 31–37＝明確錯）
+  **本質不同**：MUS 是「該用哪個淡塗濃度代表這色」的判斷題、非 bug，硬套不可靠樣本反而引錯。故**維持總表值**
+  （一個內部一致的中等強度選擇；唯 Prussian Blue 等在水彩慣例下偏淡，屬取捨）。`PAB/NEO/PSTP/PSTC/LUM/NART` 準，維持總表值。
 - override 套進 `Series_Color_Index`（修 hex＋rgb、加 `note` 溯源）與 `Cross_Series_Map`；**凡含 SUP 或 NC2 的
   正典碼**（幾乎全部）都**重算** `avgHex`／`maxDeltaE76`／`consistency`（自修正後各系列值；一致性門檻依總表
   既有分布 High<10／Medium<25／Low 回推）。共 **204 筆**系列色帶溯源 `note`。
