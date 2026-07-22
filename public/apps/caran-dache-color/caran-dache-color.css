@@ -135,8 +135,9 @@ main { min-height: 100vh; }
 .cda-swatch .code { font-size: .82rem; font-weight: 600; }
 .cda-swatch .badge {
   display: inline-flex; align-items: center; justify-content: center;  /* 數字在彈丸內水平垂直置中 */
-  min-width: 22px; font-size: .68rem; opacity: .9; font-weight: 600;
-  border: 1px solid currentColor; border-radius: 20px; padding: 0 5px; line-height: 1.5;
+  font-size: .68rem; opacity: .9; font-weight: 600;
+  border: 1px solid currentColor; border-radius: 20px;
+  padding: 0 9px; line-height: 1.5;   /* 拉長的彈丸形（左右留白），非正圓 */
 }   /* 正典模式：涵蓋幾個系列 */
 
 /* 色塊上的號碼/標記：前景固定用 pickTextColor（依色塊自身相對亮度算）的值，與主題無關。
