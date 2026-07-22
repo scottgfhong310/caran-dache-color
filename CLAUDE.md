@@ -1,9 +1,9 @@
 # caran-dache-color — Session context
 
-Caran d’Ache 8 大系列色號 → CSS（hex / `var(--cda-<series>-<code>)` / `rgb()` / `.cda-bg-…`）對照的**唯讀參考**單頁 WebApp：
-系列色票網格（8 系列 chips）、**系列 / 正典色碼雙軸瀏覽**、點色票看明細（耐光度 / 色料 / WCAG）、
+Caran d’Ache 9 大系列色號 → CSS（hex / `var(--cda-<series>-<code>)` / `rgb()` / `.cda-bg-…`）對照的**唯讀參考**單頁 WebApp：
+系列色票網格（9 系列 chips）、**系列 / 正典色碼雙軸瀏覽**、點色票看明細（耐光度 / 色料 / WCAG）、
 **同色碼跨系列色帶**（點某系列即跳去看該系列色）、搜尋、一鍵複製四種格式、整份 `.css` 匯出／下載。
-764 系列色 / 227 正典色碼 / 8 系列。
+812 系列色 / 227 正典色碼 / 9 系列。
 
 本 app 屬於 **nodeapp WebApp 家族**；共同規範與流程在
 <https://github.com/scottgfhong310/nodeapp-webapp-family>（`DESIGN_GUIDELINES.md` 規範、`WORKFLOW.md` 流程）。**改動前請先讀那兩份，照其中 canon 做。**
@@ -14,18 +14,18 @@ Caran d’Ache 8 大系列色號 → CSS（hex / `var(--cda-<series>-<code>)` / 
 app.js                                  # Express 入口：port 3000；/ → 302 /apps/caran-dache-color/
                                         # 唯讀，無 API、無上傳（薄後端只做 static + 轉址 + JSON 404）
 data/source/                            # 單一真相（建置期用，不進前端）
-├─ Caran_dAche_Master_Color_Index_v1.0.2.xlsx # 原始總表（13 工作表；上游最新）
+├─ Caran_dAche_Master_Color_Index_v1.1.0.xlsx # 原始總表（13 工作表；上游最新）
 ├─ generate.py                          # xlsx(+resampled_hex) → 前端三支 cda-*.js（需 openpyxl）
 ├─ extract_charts.py                    # 由官方色卡 PDF 重取 SUP/NC2 真值（需 PyMuPDF；PDF 不進 repo）
 ├─ resampled_hex.json                   # extract_charts 產出的 SUP/NC2 修正 hex（generate.py 當 override）
 ├─ extract_lightfastness.py             # 由 2025 官方目錄 PDF 讀正確耐光度星等（需 PyMuPDF；PDF 不進 repo）
 ├─ catalogue_lightfastness.json         # 耐光度修正（code→星數；generate.py 覆蓋 lf/lfNorm）
-└─ build_corrected_xlsx.py              # 把 hex＋耐光度修正套回整份 xlsx → data/reference/…v1.0.2-corrected.xlsx
+└─ build_corrected_xlsx.py              # 把 hex＋耐光度修正套回整份 xlsx → data/reference/…v1.1.0-corrected.xlsx
 data/reference/                         # 可攜「修正版總表」參考檔（＋README）；DESIGN.md §4.1
 public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-color/）
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
-├─ data/cda-series.js                   # window.CDA_SERIES（8 系列 registry）
-├─ data/cda-colors.js                   # window.CDA_COLORS（764 系列色）+ window.CDA_META
+├─ data/cda-series.js                   # window.CDA_SERIES（9 系列 registry）
+├─ data/cda-colors.js                   # window.CDA_COLORS（812 系列色）+ window.CDA_META
 ├─ data/cda-canonical.js                # window.CDA_CANONICAL（227 正典碼 + 同碼跨系列 hex）
 ├─ materialize-dark.css · side-tool.css · filter-clear.css · filter-clear.js
 ├─ i18n.js · locales/{zh-Hant,en,ja}.js
@@ -51,9 +51,9 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 
 ## 本 app 的 canon 重點
 
-- **唯讀參考、無後端 API**：資料是靜態 `data/cda-*.js`，由 `data/source/Caran_dAche_Master_Color_Index_v1.0.xlsx`
+- **唯讀參考、無後端 API**：資料是靜態 `data/cda-*.js`，由 `data/source/Caran_dAche_Master_Color_Index_v1.1.0.xlsx`
   以 `generate.py` 產生（見 DESIGN.md §資料）；不需上傳/編輯，故 `app.js` 極簡。
-- **系列 / 正典雙軸**（比 faber-castell-color 的平面 141 色多的關鍵）：`Series_Color_Index`（764）為事實表、
+- **系列 / 正典雙軸**（比 faber-castell-color 的平面 141 色多的關鍵）：`Series_Color_Index`（812）為事實表、
   `Color_Master`（227）為去重的正典色碼層、`Cross_Series_Map` 為同碼跨系列 hex。UI 預設**系列優先**、
   另附**正典色碼**統一瀏覽；明細一律帶**同色碼跨系列色帶**。見 DESIGN.md。
 - **可嵌入 lib** `caran-dache-color-lib.js`（`window.CaranDacheColorLib`）：`filter` / `sortColors`
@@ -80,7 +80,7 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 | `side-tool.css`（正統 flex 版）| 家族 §5.5 正統版（複製自 `faber-castell-color`） |
 | `filter-clear.css`、`filter-clear.js` | 家族 §5.12 篩選框「清除」× 鈕 utility（自 `faber-castell-color` 複製、byte-identical） |
 | `i18n.js` | 家族共用（`markdown-reader` 等同款引擎） |
-| `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.0.2.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
+| `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.1.0.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
 
 > 為什麼長這樣（唯讀決策、資料來源與雙軸模型、跨系列色帶、色名顯示、CSS 單一真相、色票不著色）
 > 見 [DESIGN.md](DESIGN.md)。

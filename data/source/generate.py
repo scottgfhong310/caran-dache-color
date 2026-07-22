@@ -25,10 +25,10 @@ import re
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.2.xlsx")
+XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.1.0.xlsx")
 OUT = os.path.abspath(os.path.join(HERE, "..", "..", "public", "apps", "caran-dache-color", "data"))
 
-SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC"]
+SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC", "NART"]
 
 # --- Corrections applied on top of the source master index (documented; DESIGN.md §4.1) ----
 # The SUP (Supracolor) and NC2 (Neocolor II) series are systematically mis-extracted in the

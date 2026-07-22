@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_corrected_xlsx.py — produce a corrected reference workbook (v1.0.2-corrected) from upstream v1.0.2.
+build_corrected_xlsx.py — produce a corrected reference workbook (v1.1.0-corrected) from upstream v1.1.0.
 
 Applies the SUP (Supracolor) & NC2 (Neocolor II) re-sampled hexes (resampled_hex.json,
 from the official chart PDFs — see DESIGN.md §4.1) consistently across every sheet that
@@ -13,15 +13,15 @@ consistent:
   · Color_Master       : for every canonical code that includes SUP or NC2 —
                          avg hex/rgb/lab, max_delta_e76, consistency, foreground,
                          best_contrast_ratio, relative_luminance
-  · README             : version -> 1.0.2-corrected + a changelog note
+  · README             : version -> 1.1.0-corrected + a changelog note
 
-(Upstream v1.0.2 already fixed the 2 Luminance #FFFFFF swatches + 3 individual blacks; this adds the full SUP/NC2 series re-sample.)
+(Upstream v1.1.0 already carries the 2 Luminance #FFFFFF + 3 individual black fixes and adds the NEOART 6901 (NART) series; this build adds the full SUP/NC2 series re-sample + the 2025-catalogue lightfastness correction on top.)
 
 Note: re-saving via openpyxl simplifies workbook-level extras (conditional formatting,
 the Dashboard chart may not survive). The DATA is authoritative; visuals are secondary.
 
 Usage:  python3 build_corrected_xlsx.py
-Output: ../reference/Caran_dAche_Master_Color_Index_v1.0.2-corrected.xlsx
+Output: ../reference/Caran_dAche_Master_Color_Index_v1.1.0-corrected.xlsx
 """
 import json
 import os
@@ -29,11 +29,11 @@ import os
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.2.xlsx")
+SRC = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.1.0.xlsx")
 RESAMPLED = os.path.join(HERE, "resampled_hex.json")
 OUTDIR = os.path.abspath(os.path.join(HERE, "..", "reference"))
-OUT = os.path.join(OUTDIR, "Caran_dAche_Master_Color_Index_v1.0.2-corrected.xlsx")
-SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC"]
+OUT = os.path.join(OUTDIR, "Caran_dAche_Master_Color_Index_v1.1.0-corrected.xlsx")
+SERIES_ORDER = ["LUM", "PAB", "SUP", "MUS", "NC2", "NEO", "PSTP", "PSTC", "NART"]
 
 
 def rgb_of(h):
@@ -246,21 +246,21 @@ def main():
     changed["Lightfastness"] = n
 
     # ---- README (version + changelog) --------------------------------------
-    # Base is upstream v1.0.2 (which fixed 2 Luminance #FFFFFF + 3 individual blacks). This
-    # build layers the FULL SUP/NC2 series re-sample on top → "1.0.2-corrected". Keep the
-    # upstream changelog rows; append ours.
+    # Base is upstream v1.1.0 (Luminance/black fixes + the new NEOART 6901 series). This build
+    # layers the FULL SUP/NC2 re-sample + the 2025-catalogue lightfastness fix on top →
+    # "1.1.0-corrected". Keep the upstream changelog rows; append ours.
     ws = wb["README"]
     if ws["A1"].value:
-        ws["A1"].value = "Caran d’Ache Master Color Index v1.0.2-corrected"
+        ws["A1"].value = "Caran d’Ache Master Color Index v1.1.0-corrected"
     for row in ws.iter_rows(min_row=1, max_col=2):
         k = row[0].value
         if k == "Workbook version":
-            row[1].value = "1.0.2-corrected"
+            row[1].value = "1.1.0-corrected"
         elif k == "Release date":
             row[1].value = "2026-07-22"
     last = ws.max_row + 1
     notes = [
-        ("Revision", "v1.0.2-corrected (unofficial — app-author reference build on top of upstream v1.0.2)"),
+        ("Revision", "v1.1.0-corrected (unofficial — app-author reference build on top of upstream v1.1.0)"),
         ("Correction", "Supracolor (SUP, 120) and Neocolor II (NC2, 84) were recorded systematically "
                        "too pale across the WHOLE palette (upstream v1.0.2 only fixed 3 individual black "
                        "swatches). Both series were re-sampled from the official Caran d'Ache colour charts "
@@ -272,7 +272,7 @@ def main():
                               "low across MUS/PAB/SUP/NC2/NEO/PSTP/PSTC (PAB/SUP/NC2 collapsed every colour "
                               "to the minimum). Replaced with the official per-colour star ratings from the "
                               "Caran d'Ache Beaux-Arts 2025 catalogue. LUM (LFI/LFII) unchanged."),
-        ("Build note", "Re-saved via openpyxl from v1.0.2; conditional formatting / dashboard visuals may "
+        ("Build note", "Re-saved via openpyxl from v1.1.0; conditional formatting / dashboard visuals may "
                        "be simplified — the tabular DATA is authoritative. hex remains a screen "
                        "approximation, not an official Caran d'Ache RGB spec."),
     ]

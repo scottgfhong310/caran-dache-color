@@ -1,10 +1,10 @@
 # caran-dache-color
 
-> 版本 v1.0｜最後更新 2026-07-22
+> 版本 v1.1｜最後更新 2026-07-22
 
 **繁體中文** ｜ [English](README.md) ｜ [日本語](README.ja.md)
 
-把 **Caran d’Ache 色號對應到 CSS** 的單頁參考 WebApp，涵蓋**全部 8 大藝術家系列**。
+把 **Caran d’Ache 色號對應到 CSS** 的單頁參考 WebApp，涵蓋**全部 9 大藝術家系列**。
 可依系列瀏覽色票網格，或切到**正典色碼**視圖；點任一色票看可直接複製的值、耐光度、色料與 WCAG 資料，
 以及一條可互跳的**同色碼跨系列**色帶。整份可匯出成含變數與 utility class 的 `.css`。
 
@@ -13,20 +13,21 @@ hex 為**官方色卡 PDF 色塊的中位數 RGB 取樣**、螢幕近似值，**
 
 ## 範圍
 
-- **8 系列** — LUMINANCE 6901、PABLO、SUPRACOLOR、MUSEUM Aquarelle、NEOCOLOR II、NEOPASTEL、
-  PASTEL PENCILS、PASTEL CUBES（後兩者共用同一份 84 色官方調色盤）。
-- **764 系列色**（每個顏色「在某系列裡」一列）· **227 正典色碼**（跨系列去重）。
+- **9 系列** — LUMINANCE 6901、PABLO、SUPRACOLOR、MUSEUM Aquarelle、NEOCOLOR II、NEOPASTEL、
+  PASTEL PENCILS、PASTEL CUBES、**NEOART 6901**（粉彩鉛筆/方塊共用同一份 84 色官方調色盤；粉彩方塊為
+  legacy 調色盤；NEOART 6901——48 色——於總表 v1.1.0 新增）。
+- **812 系列色**（每個顏色「在某系列裡」一列）· **227 正典色碼**（跨系列去重）。
 
 ## 特色
 
-- **雙軸瀏覽** — *系列*（8 個 chips → 該系列網格）與 *正典色碼*（227 碼，每格顯示跨系列平均色＋涵蓋系列數徽章）。
+- **雙軸瀏覽** — *系列*（9 個 chips → 該系列網格）與 *正典色碼*（227 碼，每格顯示跨系列平均色＋涵蓋系列數徽章）。
 - **同色碼跨系列色帶** — 每個明細都列出該色碼在各系列的實際 hex；點某系列即跳去看該系列色。並標示
   最大跨系列色差 ΔE76 與一致性（High/Medium/Low）。
 - **搜尋** — 依色號或色名（英/中/日）即時過濾。
 - **排序** — 側鍵循環：色號 / 色相光譜 / 明度 / 色系分群（9 色系＋sticky 標頭、無彩度殿後）/ hex 原始值；會記憶。
 - **四種複製格式** — `var(--cda-lum-001)`、`#f4f4f5`、`rgb(244, 244, 245)`、`.cda-bg-lum-001`。
 - **明細** — 耐光度（等級＋正規化 /5＋標準）、色料索引、WCAG AA 對比；在地色名（中/日）當輔助資料呈現。
-- **CSS 匯出** — 檢視 / 複製 / 下載 `caran_dache_colors.css`（764 個 `--cda-<系列>-<色號>` 變數 ＋
+- **CSS 匯出** — 檢視 / 複製 / 下載 `caran_dache_colors.css`（812 個 `--cda-<系列>-<色號>` 變數 ＋
   `.cda-color-…` / `.cda-bg-…` utility class）。
 - **唯讀** — 無上傳、無後端 API；資料是由總表產生的靜態 registry。
 - **light / dark 主題**（預設 dark）與 **三語 UI**（zh-Hant / en / ja）。色票在兩種主題下都保留真實顏色。
@@ -47,12 +48,12 @@ npm start          # → http://localhost:3000/apps/caran-dache-color/
 ```
 app.js                                  # Express：static + / → 302 + JSON 404（無 API、無上傳）
 data/source/                            # 單一真相（僅建置期用）
-├─ Caran_dAche_Master_Color_Index_v1.0.xlsx
+├─ Caran_dAche_Master_Color_Index_v1.1.0.xlsx
 └─ generate.py                          # xlsx → cda-*.js（需 openpyxl）
 public/apps/caran-dache-color/
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
-├─ data/cda-series.js                   # window.CDA_SERIES — 8 系列
-├─ data/cda-colors.js                   # window.CDA_COLORS — 764 系列色（＋ window.CDA_META）
+├─ data/cda-series.js                   # window.CDA_SERIES — 9 系列
+├─ data/cda-colors.js                   # window.CDA_COLORS — 812 系列色（＋ window.CDA_META）
 ├─ data/cda-canonical.js                # window.CDA_CANONICAL — 227 正典碼 ＋ 跨系列 hex
 ├─ materialize-dark.css · side-tool.css · filter-clear.css · filter-clear.js · i18n.js · locales/{zh-Hant,en,ja}.js
 ```
@@ -101,7 +102,7 @@ public/apps/caran-dache-color/
 
 ## 來源與準確度
 
-資料源自 `Caran_dAche_Master_Color_Index_v1.0.xlsx`，其本身彙整自官方 Caran d’Ache 色卡 PDF。
+資料源自 `Caran_dAche_Master_Color_Index_v1.1.0.xlsx`，其本身彙整自官方 Caran d’Ache 色卡 PDF。
 hex 為**中位數 RGB 螢幕近似值**、非官方規格；實體顏色隨紙張、下筆力道、疊色、加水、黏合劑、光照、
 掃描器與螢幕描述檔而變。雙軸資料模型、跨系列色帶與產生管線見 [DESIGN.md](DESIGN.md)。
 

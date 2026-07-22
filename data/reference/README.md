@@ -2,7 +2,7 @@
 
 > 版本 v1.0.2｜最後更新 2026-07-22
 
-`Caran_dAche_Master_Color_Index_v1.0.2-corrected.xlsx` — the **corrected, authoritative
+`Caran_dAche_Master_Color_Index_v1.1.0-corrected.xlsx` — the **corrected, authoritative
 reference** version of the Caran d’Ache master colour index, in the same 13-sheet shape as
 the original. Built on top of upstream **v1.0.2**. (Unofficial — an app-author reference
 build, not an official Caran d’Ache release.)

@@ -28,7 +28,7 @@ import fitz
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.0.2.xlsx")
+XLSX = os.path.join(HERE, "Caran_dAche_Master_Color_Index_v1.1.0.xlsx")
 OUT = os.path.join(HERE, "catalogue_lightfastness.json")
 DEFAULT_PDF_DIR = "/Users/Shared/nodeapp/My Files/CARAN D'ACHE"
 CATALOGUE = "Catcoul_Beauxarts_2025_EN_BD.pdf"

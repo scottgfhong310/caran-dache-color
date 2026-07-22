@@ -1,10 +1,10 @@
 # caran-dache-color
 
-> 版本 v1.0｜最後更新 2026-07-22
+> 版本 v1.1｜最後更新 2026-07-22
 
 [繁體中文](README.zh-Hant.md) ｜ **English** ｜ [日本語](README.ja.md)
 
-A single-page reference WebApp mapping **Caran d’Ache colour codes → CSS**, across all **8 core artist series**.
+A single-page reference WebApp mapping **Caran d’Ache colour codes → CSS**, across all **9 core artist series**.
 Browse a series as a swatch grid, or switch to the **canonical-code** view; click any swatch for its copy-ready
 values, lightfastness, pigment and WCAG data, plus a **same-code-across-series** strip you can jump through.
 Export the whole thing as a `.css` file of variables and utility classes.
@@ -14,13 +14,14 @@ official Caran d’Ache RGB/HEX specs. The same colour code renders differently 
 
 ## Scope
 
-- **8 series** — LUMINANCE 6901, PABLO, SUPRACOLOR Soft Aquarelle, MUSEUM Aquarelle, NEOCOLOR II, NEOPASTEL,
-  PASTEL PENCILS, PASTEL CUBES (the last two share one official 84-colour palette).
-- **764 series-colours** (one row per colour-in-a-series) · **227 canonical codes** (de-duplicated across series).
+- **9 series** — LUMINANCE 6901, PABLO, SUPRACOLOR Soft Aquarelle, MUSEUM Aquarelle, NEOCOLOR II, NEOPASTEL,
+  PASTEL PENCILS, PASTEL CUBES, **NEOART 6901** (Pastel Pencils/Cubes share one 84-colour palette; Pastel Cubes is
+  a legacy palette; NEOART 6901 — 48 colours — was added in master-index v1.1.0).
+- **812 series-colours** (one row per colour-in-a-series) · **227 canonical codes** (de-duplicated across series).
 
 ## Features
 
-- **Two browse axes** — *Series* (8 chips → that series' grid) and *Canonical codes* (227 codes, each with a
+- **Two browse axes** — *Series* (9 chips → that series' grid) and *Canonical codes* (227 codes, each with a
   swatch of its cross-series average and a badge for how many series carry it).
 - **Same-code-across-series strip** — every detail view lists the code's actual hex in each series; click a
   series to jump straight to that series' colour. Max cross-series ΔE76 + consistency (High/Medium/Low) are shown.
@@ -30,7 +31,7 @@ official Caran d’Ache RGB/HEX specs. The same colour code renders differently 
 - **Copy in four formats** — `var(--cda-lum-001)`, `#f4f4f5`, `rgb(244, 244, 245)`, `.cda-bg-lum-001`.
 - **Detail view** — lightfastness (rating + normalised /5 + standard), pigment index, WCAG AA contrast;
   localized colour name (zh/ja) shown as supplementary data.
-- **CSS export** — view / copy / download `caran_dache_colors.css` (764 `--cda-<series>-<code>` vars +
+- **CSS export** — view / copy / download `caran_dache_colors.css` (812 `--cda-<series>-<code>` vars +
   `.cda-color-…` / `.cda-bg-…` utility classes).
 - **Read-only** — no upload, no backend API; data is a static registry generated from the master index.
 - **light / dark theme** (default dark) and **three UI languages** (zh-Hant / en / ja). Swatches keep their
@@ -52,12 +53,12 @@ Needs the Node server (front-end uses absolute paths) — **not** GitHub Pages c
 ```
 app.js                                  # Express: static + / → 302 + JSON 404 (no API, no upload)
 data/source/                            # single source of truth (build-time only)
-├─ Caran_dAche_Master_Color_Index_v1.0.xlsx
+├─ Caran_dAche_Master_Color_Index_v1.1.0.xlsx
 └─ generate.py                          # xlsx → cda-*.js (needs openpyxl)
 public/apps/caran-dache-color/
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
-├─ data/cda-series.js                   # window.CDA_SERIES — 8 series
-├─ data/cda-colors.js                   # window.CDA_COLORS — 764 series-colours (+ window.CDA_META)
+├─ data/cda-series.js                   # window.CDA_SERIES — 9 series
+├─ data/cda-colors.js                   # window.CDA_COLORS — 812 series-colours (+ window.CDA_META)
 ├─ data/cda-canonical.js                # window.CDA_CANONICAL — 227 codes + cross-series hex
 ├─ materialize-dark.css · side-tool.css · filter-clear.css · filter-clear.js · i18n.js · locales/{zh-Hant,en,ja}.js
 ```
@@ -107,7 +108,7 @@ what `maxDeltaE76` / `consistency` describe.
 
 ## Source & accuracy
 
-Data derived from `Caran_dAche_Master_Color_Index_v1.0.xlsx`, itself compiled from official Caran d’Ache
+Data derived from `Caran_dAche_Master_Color_Index_v1.1.0.xlsx`, itself compiled from official Caran d’Ache
 colour-chart PDFs. Hex is a **median-RGB screen approximation**, not an official spec; physical colour varies
 with paper, pressure, layering, water, binder, lighting, scanner and display profile. See [DESIGN.md](DESIGN.md)
 for the two-axis data model, the cross-series strip, and the generation pipeline.
