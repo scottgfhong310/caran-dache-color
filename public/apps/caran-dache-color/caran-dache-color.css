@@ -134,7 +134,8 @@ main { min-height: 100vh; }
 }
 .cda-swatch .code { font-size: .82rem; font-weight: 600; }
 .cda-swatch .badge {
-  font-size: .68rem; opacity: .9; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center;  /* 數字在彈丸內水平垂直置中 */
+  min-width: 22px; font-size: .68rem; opacity: .9; font-weight: 600;
   border: 1px solid currentColor; border-radius: 20px; padding: 0 5px; line-height: 1.5;
 }   /* 正典模式：涵蓋幾個系列 */
 
