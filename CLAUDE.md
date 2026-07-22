@@ -58,10 +58,12 @@ cd data/source && pip3 install openpyxl && python3 generate.py
   另附**正典色碼**統一瀏覽；明細一律帶**同色碼跨系列色帶**。見 DESIGN.md。
 - **可嵌入 lib** `caran-dache-color-lib.js`（`window.CaranDacheColorLib`）：`filter` / `sortColors`
   （`code`/`hue`/`lightness`/`family`/`hex`，無彩度殿後）/ `colorFamily`＋`FAMILY_ORDER`（9 色系分群）/
-  `hexToRgb` / `rgbToHsl` / `rgbToLab` / `deltaE`（ΔE00）/ `pickTextColor`（WCAG 對比選黑白字）/
+  `hexToRgb` / `rgbToHsl` / `rgbToLab` / `deltaE`（ΔE00）/ `deltaEBand` /
+  **`nearestCDA`（v2 已實作）**——以 ΔE00 找最接近的系列色（預設排除與 PSTP 同盤的 PSTC、`opts.series` 可過濾；
+  比照 FC 的 `nearestFC`，消費端要用時複製 lib＋`data/cda-colors.js`）/ `pickTextColor`（WCAG 對比選黑白字）/
   `contrastRatio` / `slug` / `copyValue` / **`buildCss`**，**純邏輯不碰 DOM**；`caran-dache-color.js`
-  才是碰 DOM 的控制器（渲染、模式/系列/排序側鍵、色系分群 sticky 標頭、Modal、跨系列跳轉、clipboard、toast）。
-  `rgbToLab`/`deltaE` 為未來「最接近 Caran d’Ache 色」比對器 `nearestCDA`（v2）預留、v1 未接消費端。
+  才是碰 DOM 的控制器（渲染、模式/系列/排序側鍵、色系分群 sticky 標頭、Modal、跨系列跳轉、
+  **最接近色 Modal**〔`#setting-nearest`；兩 modal 交接需延遲 ~300ms 再開〕、clipboard、toast）。
 - **色票不隨主題重著色**（§4.7「內容本身即設計」）：色塊恆為 Caran d’Ache 真實色，
   只有外殼（bg/文字/工具列）跟 light/dark；色塊上文字黑白由 `pickTextColor` 依對比自動選。
 - **色名是資料**：英文正典色名保留於 `CDA_COLORS` / `CDA_CANONICAL`，為主要顯示；明細內另把

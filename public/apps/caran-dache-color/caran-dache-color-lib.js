@@ -27,7 +27,11 @@
  *   sortColors(colors, mode) → Color[]           依 mode 排序（不改輸入）
  *   colorFamily(color) → 'red'|…|'neutral'       某色屬哪個色系（s<0.17 → neutral）
  *   rgbToHsl(r,g,b) → {h,s,l}
- *   rgbToLab(r,g,b) → [L,a,b] · deltaE(labA,labB) → ΔE00 (CIEDE2000)   （為未來 nearestCDA 預留）
+ *   rgbToLab(r,g,b) → [L,a,b] · deltaE(labA,labB) → ΔE00 (CIEDE2000) · deltaEBand(dE) → 'very'|'close'|'noticeable'|'far'
+ *   nearestCDA({r,g,b}, {n,series,colors}) → [{seriesId,code,name,hex,cssVar,deltaE,band}]
+ *       最接近的 Caran d’Ache 系列色（依 ΔE00 升冪）。預設比對 window.CDA_COLORS 全系列、
+ *       但**排除 PSTC**（與 PSTP 共用同一份官方調色盤、hex 逐碼相同，避免 top-N 重複）；
+ *       opts.series（字串或陣列）明確指定要比對的系列（此時不再排除 PSTC）；opts.colors 自備參考清單。
  *   hexToRgb(hex) → {r,g,b} | null
  *   relLuminance(r,g,b) → 0..1                    sRGB 相對亮度（WCAG）
  *   pickTextColor(color) → '#000000' | '#ffffff' 色塊上文字該用黑或白（對比取勝者）
@@ -147,6 +151,43 @@
     var kL = 1, kC = 1, kH = 1;
     var tL = dLp / (kL * Sl), tC = dCp / (kC * Sc), tH = dHp / (kH * Sh);
     return Math.sqrt(tL * tL + tC * tC + tH * tH + Rt * tC * tH);
+  }
+  // ΔE 品質級距（供 UI 著色 / i18n）：very ≤2 / close ≤5 / noticeable ≤10 / far（與 FC nearestFC 同制）
+  function deltaEBand(dE) {
+    return dE <= 2 ? 'very' : dE <= 5 ? 'close' : dE <= 10 ? 'noticeable' : 'far';
+  }
+
+  // ---- 最接近 Caran d’Ache 色比對（nearestCDA，v2） -----------------------
+  // 參考庫＝系列色（買得到的實體筆），非正典平均色。Lab 依 colors 陣列 identity 快取。
+  var _refLab = null, _refFor = null;
+  function _refs(colors) {
+    if (_refLab && _refFor === colors) return _refLab;
+    _refFor = colors;
+    _refLab = colors.filter(function (c) { return c.hex; })
+      .map(function (c) { return { c: c, lab: rgbToLab(c.r, c.g, c.b) }; });
+    return _refLab;
+  }
+  // 找最接近的 Caran d’Ache 系列色。rgb: {r,g,b}；opts.n=幾筆（預設1）；
+  // opts.series=只比對這些系列（字串或陣列；未指定時比對全系列但**排除 PSTC**——
+  // 它與 PSTP 共用同一份官方調色盤、hex 逐碼相同，會讓 top-N 出現重複結果）；
+  // opts.colors=自備參考清單。回傳 [{seriesId, code, name, hex, cssVar, deltaE, band}]，依 deltaE 升冪。
+  function nearestCDA(rgb, opts) {
+    opts = opts || {};
+    var colors = opts.colors || window.CDA_COLORS || [];
+    var n = opts.n || 1;
+    var inc = null;
+    if (opts.series) {
+      inc = {};
+      (Array.isArray(opts.series) ? opts.series : [opts.series]).forEach(function (s) { inc[s] = 1; });
+    }
+    var t = rgbToLab(rgb.r, rgb.g, rgb.b);
+    return _refs(colors).filter(function (x) {
+      return inc ? inc[x.c.seriesId] : x.c.seriesId !== 'PSTC';
+    }).map(function (x) {
+      var d = deltaE(t, x.lab);
+      return { seriesId: x.c.seriesId, code: x.c.code, name: x.c.name, hex: x.c.hex,
+               cssVar: x.c.cssVar, deltaE: d, band: deltaEBand(d) };
+    }).sort(function (a, b) { return a.deltaE - b.deltaE; }).slice(0, n);
   }
 
   // 色系分群（沿色相環）；'neutral'＝黑/白/灰。
@@ -269,6 +310,8 @@
     rgbToHsl: rgbToHsl,
     rgbToLab: rgbToLab,
     deltaE: deltaE,
+    deltaEBand: deltaEBand,
+    nearestCDA: nearestCDA,
     relLuminance: relLuminance,
     contrastRatio: contrastRatio,
     pickTextColor: pickTextColor,

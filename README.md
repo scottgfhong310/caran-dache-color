@@ -33,6 +33,9 @@ official Caran d’Ache RGB/HEX specs. The same colour code renders differently 
   localized colour name (zh/ja) shown as supplementary data.
 - **CSS export** — view / copy / download `caran_dache_colors.css` (812 `--cda-<series>-<code>` vars +
   `.cda-color-…` / `.cda-bg-…` utility classes).
+- **Nearest-colour matcher** — a side-tool opens a picker/hex input and lists the top-10 nearest series
+  colours by CIEDE2000 (ΔE00) with quality bands; click a result to jump to its detail (`nearestCDA` in the lib,
+  embeddable like faber-castell-color's `nearestFC`).
 - **Read-only** — no upload, no backend API; data is a static registry generated from the master index.
 - **light / dark theme** (default dark) and **three UI languages** (zh-Hant / en / ja). Swatches keep their
   true colour in both themes.
@@ -75,7 +78,8 @@ Pure logic, no DOM — embeddable anywhere:
 | `sortColors(colors, mode)` | sort by `'code'` / `'hue'` / `'lightness'` / `'family'` / `'hex'` (does not mutate) |
 | `colorFamily(color)` | which of nine wheel families (greys → `'neutral'`) |
 | `hexToRgb` / `rgbToHsl` / `rgbToLab` | colour-space conversions |
-| `deltaE(labA, labB)` | CIEDE2000 (ΔE00) — reserved for a future `nearestCDA` matcher |
+| `deltaE(labA, labB)` / `deltaEBand(dE)` | CIEDE2000 (ΔE00) + quality band (`very`/`close`/`noticeable`/`far`) |
+| `nearestCDA({r,g,b}, {n,series,colors})` | nearest Caran d’Ache series colours by ΔE00 (PSTC deduped by default; per-series filter) |
 | `pickTextColor(color)` | `'#000000'` / `'#ffffff'` — higher-contrast text for a swatch (WCAG) |
 | `copyValue(color, fmt)` | `fmt`: `'var'` / `'hex'` / `'rgb'` / `'class'` → copy string |
 | `buildCss(colors)` | full CSS text (`:root` vars + utility classes) |

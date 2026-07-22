@@ -35,6 +35,15 @@ I18n.register('en', {
   'family.magenta': 'Magenta',
   'family.neutral': 'Neutral / greys',
 
+  'tool.nearest': 'Find the nearest Caran d’Ache colour',
+  'nearest.title': 'Find the nearest Caran d’Ache colour',
+  'nearest.sub': 'Perceptual match (CIEDE2000 / ΔE00) across all series; PSTC shares the Pastel Pencils palette and is not listed twice',
+  'nearest.invalid': 'Enter a valid #rrggbb',
+  'band.very': 'excellent match',
+  'band.close': 'close',
+  'band.noticeable': 'noticeable',
+  'band.far': 'far',
+
   'detail.crossSeries': 'Same code across series',
   'detail.canonTag': 'Canonical · {n} series',
   'detail.close': 'Close',

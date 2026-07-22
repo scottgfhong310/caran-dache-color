@@ -204,6 +204,51 @@ main { min-height: 100vh; }
 .cross-item .cs-hex { font-size: .64rem; opacity: .9; }
 .cross-note { font-size: .74rem; color: var(--muted); margin-top: 8px; }
 
+/* ===== 最接近色比對 Modal（nearestCDA） ===== */
+.nearest-modal { border-radius: 14px; max-width: 560px; }
+.nearest-modal .modal-content h5 { font-size: 1.05rem; font-weight: 500; }
+.nearest-sub { font-size: .8rem; color: var(--muted); margin: 2px 0 12px; }
+.nearest-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+#nearest-picker {
+  width: 46px; height: 38px; padding: 2px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+}
+#nearest-hex {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+  height: 38px; padding: 0 12px; width: 130px; font-size: .9rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  outline: none; transition: border-color .15s;
+}
+#nearest-hex:focus { border-color: var(--accent); }
+#nearest-hex.invalid { border-color: #ff6e6e; }
+.nearest-results { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow: auto; }
+.nearest-row {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+  padding: 6px 10px; cursor: pointer; transition: border-color .15s;
+}
+.nearest-row:hover { border-color: var(--accent); }
+.nr-swatch {
+  flex: 0 0 auto; width: 88px; height: 34px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+/* 色塊上文字前景固定用 pickTextColor 的 inline 值（materialize-dark 裸 span 坑：color:inherit 搶回） */
+.nr-swatch .nr-code { color: inherit; font-size: .72rem; font-weight: 600; letter-spacing: .3px; }
+.nr-name { flex: 1; font-size: .84rem; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nr-hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .76rem; color: var(--muted); }
+.nr-de {
+  font-size: .72rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border);
+  color: var(--muted); white-space: nowrap;
+}
+.nr-de.band-very { color: #37b26b; border-color: #37b26b; }
+.nr-de.band-close { color: #26a69a; border-color: #26a69a; }
+.nr-de.band-noticeable { color: #f0ad4e; border-color: #f0ad4e; }
+.nearest-empty { color: var(--muted); font-size: .84rem; padding: 12px 0; }
+
 /* ===== CSS 匯出 Modal ===== */
 .css-modal { border-radius: 14px; max-width: 720px; }
 .css-modal .modal-content h5 { font-size: 1.05rem; font-weight: 500; }

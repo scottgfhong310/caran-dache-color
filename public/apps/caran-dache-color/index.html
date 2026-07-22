@@ -81,6 +81,9 @@
     <div id="setting-sort" class="side-tool" data-i18n-title="tool.sort" title="排序：色號 / 色相 / 明度 / 色系 / hex">
       <i class="material-icons">sort</i>
     </div>
+    <div id="setting-nearest" class="side-tool" data-i18n-title="tool.nearest" title="找最接近的 Caran d’Ache 色">
+      <i class="material-icons">colorize</i>
+    </div>
     <div id="setting-css" class="side-tool" data-i18n-title="tool.css" title="檢視 / 複製整份 CSS">
       <i class="material-icons">code</i>
     </div>
@@ -119,6 +122,22 @@
           <div id="detail-cross-note" class="cross-note"></div>
         </div>
       </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect btn-flat" data-i18n="detail.close">關閉</a>
+    </div>
+  </div>
+
+  <!-- ===== 最接近色比對 Modal（nearestCDA；內容由 JS 填入） ===== -->
+  <div id="nearest-modal" class="modal nearest-modal">
+    <div class="modal-content">
+      <h5 data-i18n="nearest.title">找最接近的 Caran d’Ache 色</h5>
+      <div class="nearest-sub" data-i18n="nearest.sub">以 CIEDE2000（ΔE00）感知色差比對全系列；PSTC 與 PSTP 同盤、不重複列出</div>
+      <div class="nearest-input-row">
+        <input type="color" id="nearest-picker" value="#aa3f1c" />
+        <input type="text" id="nearest-hex" value="#aa3f1c" maxlength="7" spellcheck="false" autocomplete="off" />
+      </div>
+      <div id="nearest-results" class="nearest-results"></div>
     </div>
     <div class="modal-footer">
       <a href="#!" class="modal-close waves-effect btn-flat" data-i18n="detail.close">關閉</a>

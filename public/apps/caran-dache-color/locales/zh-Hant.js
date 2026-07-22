@@ -35,6 +35,15 @@ I18n.register('zh-Hant', {
   'family.magenta': '洋紅',
   'family.neutral': '中性 / 灰階',
 
+  'tool.nearest': '找最接近的 Caran d’Ache 色',
+  'nearest.title': '找最接近的 Caran d’Ache 色',
+  'nearest.sub': '以 CIEDE2000（ΔE00）感知色差比對全系列實體色；PSTC 與 PSTP 同盤、不重複列出',
+  'nearest.invalid': '請輸入有效的 #rrggbb',
+  'band.very': '極接近',
+  'band.close': '接近',
+  'band.noticeable': '可辨差異',
+  'band.far': '差異大',
+
   'detail.crossSeries': '同色碼跨系列',
   'detail.canonTag': '正典 · {n} 系列',
   'detail.close': '關閉',

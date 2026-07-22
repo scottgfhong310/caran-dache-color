@@ -35,7 +35,7 @@
              hex: c.avgHex, r: rgb.r, g: rgb.g, b: rgb.b, seriesCount: c.seriesCount, _c: c };
   }).filter(Boolean);
 
-  var $grid, $noResult, $count, $search, $chips, detailModal, cssModal;
+  var $grid, $noResult, $count, $search, $chips, detailModal, cssModal, nearestModal;
   var mode = 'series';
   var activeSeries = (META.seriesOrder && META.seriesOrder[0]) || (SERIES[0] && SERIES[0].id) || 'LUM';
   var sortMode = 'code';
@@ -282,6 +282,28 @@
     return Lib.copyValue({ hex: cc.avgHex, r: rgb.r, g: rgb.g, b: rgb.b }, fmt);
   }
 
+  // ---- 最接近色比對（nearestCDA） ------------------------------------------
+  function renderNearest() {
+    var hexv = $('#nearest-hex').val().trim();
+    var rgb = Lib.hexToRgb(hexv);
+    $('#nearest-hex').toggleClass('invalid', !rgb);
+    if (!rgb) {
+      $('#nearest-results').html('<div class="nearest-empty">' + esc(T('nearest.invalid')) + '</div>');
+      return;
+    }
+    var rows = Lib.nearestCDA(rgb, { n: 10 });
+    $('#nearest-results').html(rows.map(function (m) {
+      var fg = Lib.pickTextColor(Lib.hexToRgb(m.hex));
+      return '<div class="nearest-row" data-series="' + esc(m.seriesId) + '" data-code="' + esc(m.code) + '">' +
+        '<span class="nr-swatch" style="background:' + esc(m.hex) + ';color:' + fg + '">' +
+          '<span class="nr-code">' + esc(m.seriesId) + '·' + esc(m.code) + '</span></span>' +
+        '<span class="nr-name">' + esc(m.name) + '</span>' +
+        '<span class="nr-hex">' + esc(m.hex) + '</span>' +
+        '<span class="nr-de band-' + m.band + '">ΔE ' + m.deltaE.toFixed(1) + ' · ' + esc(T('band.' + m.band)) + '</span>' +
+      '</div>';
+    }).join(''));
+  }
+
   // ---- CSS 匯出（只涵蓋 series 色） ---------------------------------------
   function cssText() { return Lib.buildCss(COLORS); }
   function openCss() { $('#css-pre').text(cssText()); cssModal.open(); }
@@ -312,6 +334,7 @@
     renderChips();
     applyFilter();
     if (current && detailModal && detailModal.isOpen) reopenCurrent();
+    if (nearestModal && nearestModal.isOpen) renderNearest();
   }
 
   // ---- 啟動 ----------------------------------------------------------------
@@ -321,6 +344,7 @@
 
     detailModal = M.Modal.init(document.getElementById('detail-modal'), { dismissible: true });
     cssModal = M.Modal.init(document.getElementById('css-modal'), { dismissible: true });
+    nearestModal = M.Modal.init(document.getElementById('nearest-modal'), { dismissible: true });
 
     try {
       var sv = localStorage.getItem(LS_SORT); if (sv && Lib.SORT_MODES.indexOf(sv) !== -1) sortMode = sv;
@@ -352,6 +376,23 @@
 
     $('#detail-copy').on('click', '.copy-btn', function () {
       flashCopied($(this), currentCopyValue($(this).data('fmt')));
+    });
+
+    // 最接近色比對
+    $('#setting-nearest').on('click', function () { renderNearest(); nearestModal.open(); });
+    $('#nearest-picker').on('input', function () { $('#nearest-hex').val(this.value); renderNearest(); });
+    $('#nearest-hex').on('input', function () {
+      var rgb = Lib.hexToRgb(this.value.trim());
+      if (rgb) $('#nearest-picker').val('#' +
+        ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1));
+      renderNearest();
+    });
+    $('#nearest-results').on('click', '.nearest-row', function () {
+      var sid = $(this).attr('data-series'), code = $(this).attr('data-code');
+      nearestModal.close();
+      // Materialize modal 收合動畫 ~250ms；立刻 open 另一個 modal 會被 overlay 收尾波及而閉合，
+      // 等收合完再開（同一坑：兩個 modal 交接一律延遲）。
+      setTimeout(function () { openSeriesDetail(sid, code); }, 300);
     });
 
     $('#setting-css').on('click', openCss);

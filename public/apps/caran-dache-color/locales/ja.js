@@ -35,6 +35,15 @@ I18n.register('ja', {
   'family.magenta': 'マゼンタ',
   'family.neutral': 'ニュートラル / グレー',
 
+  'tool.nearest': '最も近い Caran d’Ache 色を探す',
+  'nearest.title': '最も近い Caran d’Ache 色を探す',
+  'nearest.sub': 'CIEDE2000（ΔE00）知覚色差で全シリーズと照合；PSTC は PSTP と同一パレットのため重複表示しません',
+  'nearest.invalid': '有効な #rrggbb を入力してください',
+  'band.very': 'ごく近い',
+  'band.close': '近い',
+  'band.noticeable': '差が分かる',
+  'band.far': '遠い',
+
   'detail.crossSeries': '同一色番号のシリーズ横断',
   'detail.canonTag': '正準 · {n} シリーズ',
   'detail.close': '閉じる',

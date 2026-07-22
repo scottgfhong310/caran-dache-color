@@ -29,6 +29,8 @@ hex 為**官方色卡 PDF 色塊的中位數 RGB 取樣**、螢幕近似值，**
 - **明細** — 耐光度（等級＋正規化 /5＋標準）、色料索引、WCAG AA 對比；在地色名（中/日）當輔助資料呈現。
 - **CSS 匯出** — 檢視 / 複製 / 下載 `caran_dache_colors.css`（812 個 `--cda-<系列>-<色號>` 變數 ＋
   `.cda-color-…` / `.cda-bg-…` utility class）。
+- **最接近色比對** — 側鍵開啟選色器/hex 輸入，以 CIEDE2000（ΔE00）列出最接近的 10 支系列色（帶品質級距），
+  點結果跳明細（lib 的 `nearestCDA`，可如 faber-castell-color 的 `nearestFC` 般嵌入他 app）。
 - **唯讀** — 無上傳、無後端 API；資料是由總表產生的靜態 registry。
 - **light / dark 主題**（預設 dark）與 **三語 UI**（zh-Hant / en / ja）。色票在兩種主題下都保留真實顏色。
 
@@ -70,7 +72,8 @@ public/apps/caran-dache-color/
 | `sortColors(colors, mode)` | 依 `'code'` / `'hue'` / `'lightness'` / `'family'` / `'hex'` 排序（不改輸入）|
 | `colorFamily(color)` | 屬九色系中哪一個（灰階 → `'neutral'`）|
 | `hexToRgb` / `rgbToHsl` / `rgbToLab` | 色彩空間轉換 |
-| `deltaE(labA, labB)` | CIEDE2000（ΔE00）——為未來 `nearestCDA` 比對器預留 |
+| `deltaE(labA, labB)` / `deltaEBand(dE)` | CIEDE2000（ΔE00）＋品質級距（`very`/`close`/`noticeable`/`far`）|
+| `nearestCDA({r,g,b}, {n,series,colors})` | 以 ΔE00 找最接近的 Caran d’Ache 系列色（預設去重 PSTC；可依系列過濾）|
 | `pickTextColor(color)` | `'#000000'` / `'#ffffff'`——色塊上對比較高的文字色（WCAG）|
 | `copyValue(color, fmt)` | `fmt`：`'var'` / `'hex'` / `'rgb'` / `'class'` → 複製字串 |
 | `buildCss(colors)` | 整份 CSS（`:root` 變數 + utility class）|
