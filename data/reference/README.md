@@ -21,7 +21,15 @@ build, not an official Caran d’Ache release.)
   cross-series average / ΔE76 / consistency. hex↔rgb columns verified 0 mismatches.
 - The two Luminance `#FFFFFF` swatches (009 Black, 639 Dark indigo) and the 3 black patches
   were already fixed upstream (v1.0.1 / v1.0.2) and are carried through.
-- The other series (PAB / NEO / PSTP / PSTC / MUS / LUM) were left as their upstream values.
+- The other series' hex (PAB / NEO / PSTP / PSTC / MUS / LUM) were left as their upstream values.
+
+**Lightfastness (all series except LUM):** the `lightfastness_rating` was systematically ~2
+stars too low — MUS/NEO/PSTP offset −2, and PAB/SUP/NC2 collapsed *every* colour to the
+minimum "H". Replaced (664 rows) with the official per-colour star ratings from the **Caran
+d'Ache Beaux-Arts 2025 catalogue** (`Catcoul_Beauxarts_2025_EN_BD.pdf`), with
+`lightfastness_normalized_5` recomputed. Verified: the catalogue's lowest-rated Pablo colours
+are exactly the known-fugitive ones. Pigments were checked too but left as-is (the workbook is
+more complete than the catalogue's abbreviated list). LUM (LFI/LFII) unchanged.
 
 ## How it was produced (reproducible)
 

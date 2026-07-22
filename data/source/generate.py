@@ -59,6 +59,17 @@ def override_for(sid, code):
 
 _OVERRIDDEN_CODES = {code for (_sid, code) in _RESAMPLED}
 
+# Lightfastness corrections from the official 2025 Beaux-Arts catalogue (star ratings). The
+# master index's lightfastness_rating was systematically ~2 stars too low (PAB/SUP/NC2 even
+# collapsed every colour to the minimum "H"). See DESIGN.md §4.2. LUM excluded (LFI/LFII).
+_LF = {}
+_lfp = os.path.join(HERE, "catalogue_lightfastness.json")
+if os.path.exists(_lfp):
+    with open(_lfp, encoding="utf-8") as _f:
+        for _sid, _m in json.load(_f).get("stars", {}).items():
+            for _code, _st in _m.items():
+                _LF[(_sid, _code)] = _st
+
 
 def _rgb_of(hexv):
     return int(hexv[1:3], 16), int(hexv[3:5], 16), int(hexv[5:7], 16)
@@ -202,6 +213,12 @@ def main():
             "cssVar": s(col(cidx, r, "css_variable")),
             "note": note,
         }
+        # Lightfastness correction from the 2025 catalogue (rating = 'H' * stars; renormalise).
+        lf_stars = _LF.get((sid, code))
+        if lf_stars is not None:
+            c["lf"] = "H" * lf_stars
+            smax = c["lfMax"] or (5 if sid in ("MUS", "PSTP", "PSTC") else 3)
+            c["lfNorm"] = round(lf_stars / smax * 5, 2)
         colors.append({k: v for k, v in c.items() if v is not None})
 
     # ---- Color_Master + Cross_Series_Map → CDA_CANONICAL ------------------

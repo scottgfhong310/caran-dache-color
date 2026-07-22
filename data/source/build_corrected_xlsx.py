@@ -219,6 +219,32 @@ def main():
         n += 1
     changed["Color_Master"] = n
 
+    # ---- Lightfastness (from the official 2025 Beaux-Arts catalogue) --------
+    # The master index's lightfastness_rating was systematically ~2 stars too low
+    # (PAB/SUP/NC2 collapsed to the minimum). See DESIGN.md §4.2. LUM untouched.
+    lfp = os.path.join(HERE, "catalogue_lightfastness.json")
+    LF = {}
+    if os.path.exists(lfp):
+        with open(lfp, encoding="utf-8") as f:
+            for sid, m in json.load(f)["stars"].items():
+                for code, st in m.items():
+                    LF[(sid, str(code))] = st
+    ws = wb["Series_Color_Index"]
+    H = hdr_idx(ws)
+    n = 0
+    for row in ws.iter_rows(min_row=2):
+        sid = row[H["series_id"] - 1].value
+        code = str(row[H["color_code"] - 1].value)
+        st = LF.get((sid, code))
+        if st is None:
+            continue
+        smax = row[H["lightfastness_scale_max"] - 1].value or (5 if sid in ("MUS", "PSTP", "PSTC") else 3)
+        row[H["lightfastness_rating"] - 1].value = "H" * st
+        if "lightfastness_normalized_5" in H:
+            row[H["lightfastness_normalized_5"] - 1].value = round(st / smax * 5, 2)
+        n += 1
+    changed["Lightfastness"] = n
+
     # ---- README (version + changelog) --------------------------------------
     # Base is upstream v1.0.2 (which fixed 2 Luminance #FFFFFF + 3 individual blacks). This
     # build layers the FULL SUP/NC2 series re-sample on top → "1.0.2-corrected". Keep the
@@ -242,6 +268,10 @@ def main():
                        "PSTP matched at deltaE76 4-7, SUP/NC2 were off by 31-37)."),
         ("Corrected scope", "204 series-colours re-sampled; Cross_Series_Map, Swatch_Reference and all "
                             "SUP/NC2-bearing Color_Master rows recomputed for consistency (hex<->rgb verified)."),
+        ("Lightfastness fix", "lightfastness_rating (and _normalized_5) were systematically ~2 stars too "
+                              "low across MUS/PAB/SUP/NC2/NEO/PSTP/PSTC (PAB/SUP/NC2 collapsed every colour "
+                              "to the minimum). Replaced with the official per-colour star ratings from the "
+                              "Caran d'Ache Beaux-Arts 2025 catalogue. LUM (LFI/LFII) unchanged."),
         ("Build note", "Re-saved via openpyxl from v1.0.2; conditional formatting / dashboard visuals may "
                        "be simplified — the tabular DATA is authoritative. hex remains a screen "
                        "approximation, not an official Caran d'Ache RGB spec."),

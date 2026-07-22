@@ -96,6 +96,23 @@ UI 明細與匯出 CSS 檔頭都聲明此限制。
 逐 sheet 一致重算），產出 `data/reference/Caran_dAche_Master_Color_Index_v1.0.2-corrected.xlsx`（＋該夾 README）——
 與原總表同 13-sheet 形態、可當權威參考檔（**非官方**，openpyxl 重存會簡化條件式格式/儀表板，資料為準）。
 
+### 4.2 耐光度系統性錯誤（依 2025 官方目錄修正）
+
+拿 **Caran d’Ache Beaux-Arts 2025 官方目錄**（`Catcoul_Beauxarts_2025_EN_BD.pdf`）交叉驗證後發現，總表的
+`lightfastness_rating` **整欄系統性偏低約 2 星**：MUS/NEO/PSTP 一致 −2（如 MUS White 記 `HHH` 實為 `HHHHH`），
+而 **PAB/SUP/NC2 更把每個顏色都塌成最低 `H`**（1 星）。目錄本身的圖例即證實範圍（Museum ★★–★★★★★、
+Pablo ★–★★★），與總表矛盾。抽取可信度已驗證：目錄評 ★（最低）的 6 支 Pablo 恰是**已知易褪色**者
+（Salmon／Pink／Mauve／Sky blue…），評 ★★★ 的是最穩定的白/灰/黑。
+
+- **重取管線＝`extract_lightfastness.py`**：目錄每列 `色碼 … 色料? #####`，文字層的 `#` 連續數＝星等；以該 `#`-run
+  為錨、綁最近左側色碼。輸出 `catalogue_lightfastness.json`（各系列 code→星數；PSTC 承 PSTP 同盤）。`generate.py`
+  載入後把 `lf`＝`'H'×星數`、`lfNorm`＝`星數 / scale_max × 5` 覆蓋（共 **664 筆**：MUS/PAB/SUP/NC2/NEO/PSTP/PSTC）。
+- **LUM 不動**（用 LFI/LFII ΔE 系統、其 I/II 值分佈合理、與目錄不同制）。
+- **色料（pigment）不動**：交叉比對後總表的 `pigment_index` **比目錄更完整**（目錄常縮寫，如 PSTP 583 目錄僅列 3
+  種、總表列 8 種），少數差異也多為排序，故維持總表值。
+- **要更新**：`python3 extract_lightfastness.py`（需外部目錄 PDF）→ `python3 generate.py`。修正版總表亦一併套用
+  （`build_corrected_xlsx.py`）。
+
 ## 5. 色名：英文正典為主、在地色名為輔（家族「資料不翻譯」的正確詮釋）
 
 家族 canon 是「**資料內容永不翻譯、只翻 UI 字串**」。色名是資料。本 app 的取捨：
