@@ -27,7 +27,7 @@ public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-c
 ├─ data/cda-series.js                   # window.CDA_SERIES（9 系列 registry）
 ├─ data/cda-colors.js                   # window.CDA_COLORS（812 系列色）+ window.CDA_META
 ├─ data/cda-canonical.js                # window.CDA_CANONICAL（227 正典碼 + 同碼跨系列 hex）
-├─ materialize-dark.css · side-tool.css · filter-clear.css · filter-clear.js
+├─ materialize-dark.css · side-tool.css · side-tool.js · filter-clear.css · filter-clear.js   # （樣式＋行為：check 微回饋、矮視窗溢出收納；權威版＝家族 repo，§5.5）
 ├─ i18n.js · locales/{zh-Hant,en,ja}.js
 ├─ icons/                                # app icon（中性「色卡扇」標記、非 CD 品牌 logo）
 │  ├─ caran-dache-color-icon(-light).svg # 母版 tile（深/淺）；標題列（乙式）品牌標記＋PNG 來源
