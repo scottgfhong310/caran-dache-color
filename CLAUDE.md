@@ -81,7 +81,7 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 | `materialize-dark.css` | 家族 repo `nodeapp-webapp-family/materialize-dark.css` |
 | `side-tool.css`（正統 flex 版）| 家族 §5.5 正統版（複製自 `faber-castell-color`） |
 | `filter-clear.css`、`filter-clear.js` | 家族 §5.12 篩選框「清除」× 鈕 utility（自 `faber-castell-color` 複製、byte-identical） |
-| `i18n.js` | 家族共用（`markdown-reader` 等同款引擎） |
+| `i18n.js` | 家族 repo `nodeapp-webapp-family/i18n.js`（權威版，byte-identical；`locales/*.js` 各 app 自維護） |
 | `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.1.0.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
 
 > 為什麼長這樣（唯讀決策、資料來源與雙軸模型、跨系列色帶、色名顯示、CSS 單一真相、色票不著色）
