@@ -1,6 +1,6 @@
 # caran-dache-color — 設計決議（DESIGN）
 
-> 版本 v1.1｜最後更新 2026-07-22
+> 版本 v1.2｜最後更新 2026-07-28
 
 「怎麼用」歸 [README](README.md)、家族共同規範歸
 [nodeapp-webapp-family](https://github.com/scottgfhong310/nodeapp-webapp-family)；本檔只記**為什麼長這樣**。
@@ -14,6 +14,26 @@ CSS 單一真相、排序模式）指回 FC 的 DESIGN.md 精神即可。
 同 FC：資料是**固定的**（由官方色卡一次性抽取），不會被使用者新增/編輯，故烘成靜態 registry，
 前端 `<script>` 直接載入、免 fetch 免 API。`app.js` 只剩 static + `/`→302 + JSON 404（連 `routes/`、
 `public/upload/` 都省）。這是家族「薄後端」原則的極限案例。要更新資料改的是**產生器**（§3），不是 app。
+
+### 1.1 為什麼也不用資料庫——與重新評估的觸發條件
+
+2026-07-28 與 FC 一併覆核，**結論同樣是維持第 0/1 層**。完整推理（public repo 排除層 3、
+量級與查詢型態不需要、沒有寫入端、單向維護迴路已存在；以及「四份複製是共用件同步問題、
+不是資料庫問題」）見 [FC 的 DESIGN.md §1.1](https://github.com/scottgfhong310/faber-castell-color/blob/main/DESIGN.md)，
+**三條觸發條件與 `db_artcolor` 的形狀以那份為準**（開自己的領域庫、不塞 `db_vkb`、
+產生器反向成匯出器、本 app 形狀不變）。本節只記 Caran d’Ache 這邊不一樣的三點：
+
+- **三層關聯結構是「這其實是關聯資料」的最強訊號，但還不足以構成理由**——§2 的
+  812 系列色／227 正典碼／跨系列對照，在關聯模型裡確實比巢狀 JSON 乾淨（尤其各系列
+  **耐光度標準不同**：LUM/NART 是 ASTM D-6901、其餘是 Blue Wool，星等尺度還各異）。
+  但這個形狀已經由 xlsx 三工作表 ＋ `generate.py` 忠實表達，前端消費的是烘好的三支 registry；
+  換成 DB 只是換一個地方放同一個模型，不會多解決什麼。
+- **本 app 是觸發條件 1（跨品牌顏料軸）的現成接點**——`CDA_CANONICAL` 已帶 `pigments`
+  （`PW6`、`PR101`、`PB15/PBk6`…），FC 那邊還沒抽。要做跨品牌對照，這是既有的 join key。
+- **本 app 會先於 FC 撞到觸發條件 3（校正 audit trail）**——目前修正已經是
+  `resampled_hex.json`（SUP/NC2 重取）＋ `catalogue_lightfastness.json`（耐光度）＋
+  `build_corrected_xlsx.py` 回套（§4.1）三段式。這類 override 檔再累積，
+  「誰在何時把哪個值改成什麼、依據哪份 PDF」就值得進表而不是進檔名。**目前尚未到。**
 
 ## 2. 為什麼是「系列 / 正典」雙軸（與 FC 平面 141 色的關鍵差異）
 
