@@ -1,5 +1,6 @@
-/* Caran d’Ache canonical colour codes — generated (do not hand-edit).
- * Source: Color_Master + Cross_Series_Map (227 codes).
+/* Caran d’Ache canonical colour codes — build artefact, do not hand-edit.
+ * Exported from the family colour database (db_artcolor), the System of Record since 2026-07-29;
+ * upstream provenance is Color_Master + Cross_Series_Map (227 codes), frozen.
  * Each code de-duplicates a shared colour number across series; `series` maps
  *   series_id -> that series' sampled hex for the same code (cross-series view).
  * Fields: code, name/nameZh/nameJa, seriesCount, seriesList, pigments,

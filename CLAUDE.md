@@ -22,6 +22,7 @@ data/source/                            # 單一真相（建置期用，不進�
 ├─ catalogue_lightfastness.json         # 耐光度修正（code→星數；generate.py 覆蓋 lf/lfNorm）
 └─ build_corrected_xlsx.py              # 把 hex＋耐光度修正套回整份 xlsx → data/reference/…v1.1.0-corrected.xlsx
 data/reference/                         # 可攜「修正版總表」參考檔（＋README）；DESIGN.md §4.1
+scripts/sync-copies.sh                  # 把 lib＋cda-colors.js 同步到 6 個複製點並 md5 驗證
 public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-color/）
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
 ├─ data/cda-series.js                   # window.CDA_SERIES（9 系列 registry）
@@ -40,9 +41,18 @@ public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-c
 
 ```bash
 npm install && node app.js              # → http://localhost:3000/apps/caran-dache-color/
-# 重新產生資料（改 xlsx 後）：
-cd data/source && pip3 install openpyxl && python3 generate.py
 ```
+
+**資料重新產生：2026-07-29 起改由 `db_artcolor` 匯出**（見 DESIGN.md §3.1）：
+
+```bash
+# 在家族工作區（未納版控）：My Projects/Art Colour/export/
+node a3-export.js --check    # 逐位元組比對本 repo 的 data/cda-*.js 與 DB 重建結果
+node a3-export.js --write    # 由 DB 重新產生
+```
+
+> **⚠️ 不要再跑 `data/source/generate.py`**——它會用凍結的 xlsx 覆蓋掉 DB 側的任何修正。
+> `data/source/` 的抽取器與 override 檔保留為**沿革**，不再是輸入端。
 
 驗證（preview 實跑）：`/` 302、資產 200、`cda-*.js` 200、API 404 回 JSON、系列網格渲染、
 系列 chips 切換、搜尋過濾、排序側鍵、點色票開明細（4 種複製格式 + 耐光度 + 色料 + WCAG）、
@@ -51,8 +61,9 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 
 ## 本 app 的 canon 重點
 
-- **唯讀參考、無後端 API**：資料是靜態 `data/cda-*.js`，由 `data/source/Caran_dAche_Master_Color_Index_v1.1.0.xlsx`
-  以 `generate.py` 產生（見 DESIGN.md §資料）；不需上傳/編輯，故 `app.js` 極簡。
+- **唯讀參考、無後端 API**：資料是靜態 `data/cda-*.js`，**由 `db_artcolor` 匯出**
+  （見 DESIGN.md §3.1）；不需上傳/編輯，故 `app.js` 極簡。
+  **app 本身不連任何資料庫**——資料檔進版控，clone 下來 `npm start` 就能跑。
 - **系列 / 正典雙軸**（比 faber-castell-color 的平面 141 色多的關鍵）：`Series_Color_Index`（812）為事實表、
   `Color_Master`（227）為去重的正典色碼層、`Cross_Series_Map` 為同碼跨系列 hex。UI 預設**系列優先**、
   另附**正典色碼**統一瀏覽；明細一律帶**同色碼跨系列色帶**。見 DESIGN.md。
@@ -82,7 +93,13 @@ cd data/source && pip3 install openpyxl && python3 generate.py
 | `side-tool.css`（正統 flex 版）| 家族 §5.5 正統版（複製自 `faber-castell-color`） |
 | `filter-clear.css`、`filter-clear.js` | 家族 §5.12 篩選框「清除」× 鈕 utility（自 `faber-castell-color` 複製、byte-identical） |
 | `i18n.js` | 家族 repo `nodeapp-webapp-family/i18n.js`（權威版，byte-identical；`locales/*.js` 各 app 自維護） |
-| `data/cda-*.js` | 由 `data/source/generate.py` 讀 `…v1.1.0.xlsx` ＋ `resampled_hex.json`（SUP/NC2 官方色卡重取修正）產生。詳見 DESIGN.md §4.1 |
+| `data/cda-*.js` | **由 `db_artcolor` 匯出**（2026-07-29 起；家族美術色材領域庫＝ System of Record）。xlsx ＋ `resampled_hex.json` 等已凍結為來源沿革，見 DESIGN.md §3.1／§4.1 |
+
+> **本 app 是 `caran-dache-color-lib.js` ＋ `data/cda-colors.js` 的權威版**，各有 6 份複製：
+> 本尊、`color-palette`、`thangka-trace`，各含 InProgress 鏡像。
+> 同步與驗證用 `bash scripts/sync-copies.sh`（會 md5 確認每份都是單一 hash）。
+> 該腳本於 2026-07-29 補上——A5 把資料改由 `db_artcolor` 匯出時，6 份複製一次全部過時，
+> 才發現本 repo 缺這支（FC 早有）。
 
 > 為什麼長這樣（唯讀決策、資料來源與雙軸模型、跨系列色帶、色名顯示、CSS 單一真相、色票不著色）
 > 見 [DESIGN.md](DESIGN.md)。

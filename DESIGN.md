@@ -63,9 +63,13 @@ Caran d’Ache 特有的事，變成可一眼比較、可互跳的動線。跨�
 `cross_series_consistency`（High/Medium/Low）標示——如 code 260「Blue」ΔE76≈80、一致性 Low（NC2 近白、
 NEO 深藍），code 371「Bluish pale」ΔE76≈3.8、一致性 High。
 
-## 3. 資料產生管線（單一真相在 xlsx）
+## 3. 資料產生管線
 
-`public/apps/caran-dache-color/data/cda-*.js` 由 `data/source/Caran_dAche_Master_Color_Index_v1.1.0.xlsx`
+> **2026-07-29 起，單一真相是 `db_artcolor`（家族美術色材領域庫），不再是 xlsx。**
+> `data/cda-*.js` 是**建置產物**，由該庫的匯出器產生（見 §3.1）。
+> 下表的 xlsx 管線改為**凍結的來源沿革**。
+
+（沿革）`data/cda-*.js` 原由 `data/source/Caran_dAche_Master_Color_Index_v1.1.0.xlsx`
 以 `data/source/generate.py`（Python + openpyxl）產生：
 
 | 輸出 | 全域 | 來源工作表 |
@@ -80,6 +84,22 @@ NEO 深藍），code 371「Bluish pale」ΔE76≈3.8、一致性 High。
   需要時擴充 `generate.py` 即可。hex 一律正規化小寫 `#rrggbb`；空字串／`—` 佔位一律省略該鍵。
 - **治理表不烘進前端**（`Source_Registry`／`Data_Dictionary`／`Integrity_Check`／`Dashboard`／`Validation_Lists`）——
   它們是溯源與品保 metadata，屬本檔記錄範圍、非 app 內容。
+
+### 3.1 現行管線（DB → 匯出產物）
+
+同 [FC 的 DESIGN.md §3.1](https://github.com/scottgfhong310/faber-castell-color/blob/main/DESIGN.md)：
+`db_artcolor` 為 System of Record，`data/cda-*.js` 由 `My Projects/Art Colour/export/a3-export.js`
+匯出、進版控；**app 的形狀一個字都沒改**（零後端、公開、clone 下來不需要資料庫）。
+要更新資料改 DB 再重跑匯出器，**不要再跑 `generate.py`**——它會用凍結的 xlsx 覆蓋 DB 側的修正。
+
+本 app 特有的兩點：
+
+- **三支輸出的欄位語意在 DB 裡分成兩層**（治理文件 §3.1）：`cda-canonical.js` 的 227 筆是
+  `tb_color`（色身分），`cda-colors.js` 的 812 筆是 `rel_color_product_line`（同碼在各系列的實際值）。
+  「同色碼跨系列色不同」這件 Caran d’Ache 特有的事，正是那個兩層模型存在的理由。
+- **A5 順手訂正了三處過時的檔頭字串**：`cda-colors.js` 原寫 `v1.0.xlsx`（與同檔 `CDA_META.source`
+  的 v1.1.0 不一致）、兩處 `8 series`（NART 於 v1.1.0 加入後實為 9）。現在系列數與清單
+  **由 DB 推導**，不可能再走樣。
 
 ## 4. hex 準確度與限制（沿用官方總表的聲明）
 
