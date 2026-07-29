@@ -17,6 +17,7 @@ I18n.register('ja', {
 
   'mode.series': 'シリーズ',
   'mode.canonical': '正準色番号',
+  'series.all': 'すべて',
 
   'sort.code': '色番号',
   'sort.hue': '色相',

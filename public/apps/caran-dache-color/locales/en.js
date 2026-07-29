@@ -17,6 +17,7 @@ I18n.register('en', {
 
   'mode.series': 'Series',
   'mode.canonical': 'Canonical codes',
+  'series.all': 'All',
 
   'sort.code': 'code',
   'sort.hue': 'hue',

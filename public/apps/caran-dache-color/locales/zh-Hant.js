@@ -17,6 +17,7 @@ I18n.register('zh-Hant', {
 
   'mode.series': '系列',
   'mode.canonical': '正典色碼',
+  'series.all': '全部',
 
   'sort.code': '色號',
   'sort.hue': '色相',

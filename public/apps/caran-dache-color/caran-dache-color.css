@@ -101,6 +101,13 @@ main { min-height: 100vh; }
 .series-chip .sid { font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .3px; }
 .series-chip .scount { font-size: .7rem; color: var(--muted); font-family: ui-monospace, monospace; }
 .series-chip.active .sid { color: var(--accent); }
+/* 「全部」與各系列之間一道豎線：它是「取消選擇」而不是第十個系列，別讓人誤讀成同一排的一員 */
+.series-chip.chip-all { margin-right: 10px; position: relative; }
+.series-chip.chip-all::after {
+  content: ''; position: absolute; right: -9px; top: 3px; bottom: 3px;
+  width: 1px; background: var(--border);
+}
+.series-chip.chip-all .sid { font-family: inherit; letter-spacing: 0; }
 
 /* ===== 色票網格 ===== */
 .cda-list { display: block; }

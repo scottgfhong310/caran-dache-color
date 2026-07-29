@@ -37,6 +37,7 @@
 
   var $grid, $noResult, $count, $search, $chips, detailModal, cssModal, nearestModal;
   var mode = 'series';
+  var ALL_SERIES = '*';     // 「全部」chip 的 activeSeries 值（不是一個真的系列 id）
   var activeSeries = (META.seriesOrder && META.seriesOrder[0]) || (SERIES[0] && SERIES[0].id) || 'LUM';
   var sortMode = 'code';
   var current = null;   // { kind, seriesId?, code } 供 i18n 重繪時重開
@@ -59,8 +60,12 @@
   // ---- 色票網格 ------------------------------------------------------------
   function cellHtml(c) {
     var fg = Lib.pickTextColor(c);
+    // 正典模式標「涵蓋幾個系列」；「全部系列」視圖標系列 id——同一個色碼在不同系列
+    // 是**不同的顏色**，攤平成一格網格後不標系列就分不出誰是誰。
     var badge = c.kind === 'canon'
-      ? '<span class="badge" style="color:' + fg + '">' + c.seriesCount + '</span>' : '';
+      ? '<span class="badge" style="color:' + fg + '">' + c.seriesCount + '</span>'
+      : (showingAllSeries()
+          ? '<span class="badge" style="color:' + fg + '">' + esc(c.seriesId) + '</span>' : '');
     var key = c.kind === 'canon' ? c.code : (c.seriesId + '|' + c.code);
     return '<div class="cda-cell" data-kind="' + c.kind + '" data-key="' + esc(key) + '">' +
       '<div class="cda-swatch" style="background:' + esc(c.hex) + ';color:' + fg + '">' +
@@ -89,8 +94,12 @@
   }
 
   function baseList() {
-    return mode === 'canonical' ? CANON_RENDER.slice() : (colorsBySeries[activeSeries] || []).slice();
+    if (mode === 'canonical') return CANON_RENDER.slice();
+    return activeSeries === ALL_SERIES ? COLORS.slice() : (colorsBySeries[activeSeries] || []).slice();
   }
+
+  // 是不是「全部系列」那一格視圖（決定色塊上要不要標系列）
+  function showingAllSeries() { return mode === 'series' && activeSeries === ALL_SERIES; }
 
   function render(list) {
     $grid.html(sortMode === 'family'
@@ -107,17 +116,27 @@
 
   // ---- 模式 / 系列切換 -----------------------------------------------------
   function renderChips() {
-    $chips.html(SERIES.map(function (s) {
+    // 「全部」＝取消系列選擇的那顆（DESIGN_GUIDELINES §5.13 之①）。系列 chips 是單選互斥、
+    // 恆有一個 active，沒有「不選」這個狀態，所以「看全部系列」必須自己是 bar 裡的一顆 chip。
+    var allActive = activeSeries === ALL_SERIES ? ' active' : '';
+    var html = '<button class="chip series-chip chip-all' + allActive + '" data-series="' + ALL_SERIES + '" ' +
+      'title="' + esc(T('series.all')) + '"><span class="sid">' + esc(T('series.all')) + '</span>' +
+      '<span class="scount">' + COLORS.length + '</span></button>';
+
+    html += SERIES.map(function (s) {
       var active = s.id === activeSeries ? ' active' : '';
       return '<button class="chip series-chip' + active + '" data-series="' + esc(s.id) + '" ' +
         'title="' + esc(s.name) + '"><span class="sid">' + esc(s.id) + '</span>' +
         '<span class="scount">' + (s.count || (colorsBySeries[s.id] || []).length) + '</span></button>';
-    }).join(''));
+    }).join('');
+    $chips.html(html);
   }
 
   function applyMode() {
     $('#mode-series').toggleClass('active', mode === 'series');
     $('#mode-canon').toggleClass('active', mode === 'canonical');
+    // 正典模式是跨系列的另一條軸，系列 chips 在那裡不成立 → 整條收起，不留按了不動的死鍵
+    // （DESIGN_GUIDELINES §5.13 之②；回去的路是恆在畫面上的模式鈕）。
     $chips.toggle(mode === 'series');
     renderChips();
     applyFilter();
@@ -131,7 +150,7 @@
   }
 
   function setSeries(id) {
-    if (!seriesById[id]) return;
+    if (id !== ALL_SERIES && !seriesById[id]) return;
     activeSeries = id;
     try { localStorage.setItem(LS_SERIES, id); } catch (e) { }
     renderChips();
@@ -349,7 +368,7 @@
     try {
       var sv = localStorage.getItem(LS_SORT); if (sv && Lib.SORT_MODES.indexOf(sv) !== -1) sortMode = sv;
       var mv = localStorage.getItem(LS_MODE); if (mv === 'series' || mv === 'canonical') mode = mv;
-      var sr = localStorage.getItem(LS_SERIES); if (sr && seriesById[sr]) activeSeries = sr;
+      var sr = localStorage.getItem(LS_SERIES); if (sr === ALL_SERIES || (sr && seriesById[sr])) activeSeries = sr;
     } catch (e) { }
 
     if (window.I18n) { I18n.apply(document); }
