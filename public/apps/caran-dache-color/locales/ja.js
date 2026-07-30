@@ -11,7 +11,7 @@ I18n.register('ja', {
   'tool.sort': '並び替え：色番号 / 色相 / 明度 / 色系統 / hex',
   'tool.css': 'CSS 全体を表示 / コピー',
   'tool.download': 'caran_dache_colors.css をダウンロード',
-  'tool.mode': 'ライト / ダーク切り替え',
+  'tool.mode': 'ライト / ダーク切替',
   'tool.lang': '言語',
   'tool.clearFilter': 'クリア',
 
@@ -71,6 +71,6 @@ I18n.register('ja', {
   'toast.copied': 'コピーしました：{v}',
   'toast.copyFail': 'コピーに失敗しました（localhost または HTTPS が必要）',
   'toast.cssCopied': 'CSS 全体をコピーしました',
-  'toast.downloaded': '{n} をダウンロードしました',
+  'toast.downloaded': 'ダウンロード：{n}',
   'toast.lang': '{name} に切り替えました'
 }, '日本語');

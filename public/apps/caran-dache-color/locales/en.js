@@ -71,6 +71,6 @@ I18n.register('en', {
   'toast.copied': 'Copied: {v}',
   'toast.copyFail': 'Copy failed (needs localhost or HTTPS)',
   'toast.cssCopied': 'Copied full CSS',
-  'toast.downloaded': 'Downloaded {n}',
+  'toast.downloaded': 'Downloaded: {n}',
   'toast.lang': 'Switched to {name}'
 }, 'English');
