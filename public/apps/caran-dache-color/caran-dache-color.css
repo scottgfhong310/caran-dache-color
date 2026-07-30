@@ -213,50 +213,84 @@ main { min-height: 100vh; }
 .cross-item .cs-hex { font-size: .64rem; opacity: .9; }
 .cross-note { font-size: .74rem; color: var(--muted); margin-top: 8px; }
 
-/* ===== 最接近色比對 Modal（nearestCDA） ===== */
-.nearest-modal { border-radius: 14px; max-width: 560px; }
-.nearest-modal .modal-content h5 { font-size: 1.05rem; font-weight: 500; }
-.nearest-sub { font-size: .8rem; color: var(--muted); margin: 2px 0 12px; }
-.nearest-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-#nearest-picker {
-  width: 46px; height: 38px; padding: 2px; cursor: pointer;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+/* ===== 最接近色側欄（nearestCDA；sidenav drawer） =====
+ * 形制沿用 markdown-reader 的檔案清單側欄：右緣、subheader ＋ divider ＋ 清單，
+ * 開啟時 body.sidenav-open 由共用 side-tool.css 把整排側鍵淡出。
+ * ⚠️ Materialize 的 .sidenav 預設貼左緣；edge:'right' 會加 .right-aligned，
+ * 這裡再以 !important 釘一次（同 markdown-reader），避免版本差異讓它跑回左邊。 */
+.sidenav {
+  background: var(--surface) !important;
+  left: auto !important;
+  right: 0 !important;
+  display: flex; flex-direction: column;      /* 表單固定在上、結果清單自己捲 */
 }
+.sidenav .subheader {
+  height: auto !important; min-height: 0 !important; line-height: 1.4 !important;
+  padding: 14px 18px !important; display: flex; align-items: center; gap: 8px;
+  color: var(--muted) !important; font-size: .92rem;
+}
+.sidenav .subheader .material-icons { color: var(--muted) !important; margin: 0; }
+.sidenav .subheader span { color: inherit; }
+.sidenav .divider { background-color: var(--border) !important; }
+/* Materialize 給 .sidenav li 的固定行高會把整塊表單撐開，這裡解掉 */
+.nearest-panel li { line-height: normal; }
+
+.nearest-sub { font-size: .74rem; color: var(--muted); padding: 10px 18px 12px; line-height: 1.45; }
+.nearest-input-row { display: flex; align-items: center; gap: 10px; padding: 12px 18px 0; }
+/* ⚠️ 原生 color input 的色塊是 shadow DOM（Chrome 的 ::-webkit-color-swatch、
+ * Firefox 的 ::-moz-color-swatch），**外框的 border-radius 圓不到它**——不處理的話
+ * 就是「方形色塊裝在圓角外框裡」，圓角看起來髒。故 wrapper 內距歸零、色塊自己也給圓角
+ * （比外框小 1px＝邊框寬度），色塊才真的是圓角的。 */
+#nearest-picker {
+  width: 64px; height: 48px; padding: 0; cursor: pointer; flex: 0 0 auto; overflow: hidden;
+  background: none; border: 1px solid var(--border); border-radius: 11px;
+}
+#nearest-picker::-webkit-color-swatch-wrapper { padding: 0; }
+#nearest-picker::-webkit-color-swatch { border: 0; border-radius: 10px; }
+#nearest-picker::-moz-color-swatch { border: 0; border-radius: 10px; }
 #nearest-hex {
   background: var(--surface); color: var(--text);
   border: 1px solid var(--border); border-radius: 10px;
-  height: 38px; padding: 0 12px; width: 130px; font-size: .9rem;
+  height: 48px; padding: 0 12px; flex: 1 1 auto; min-width: 0; width: auto; font-size: .9rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   outline: none; transition: border-color .15s;
 }
 #nearest-hex:focus { border-color: var(--accent); }
 #nearest-hex.invalid { border-color: #ff6e6e; }
-.nearest-results { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow: auto; }
+
+/* 結果清單：側欄是窄長條，故一列一色、色名與 hex/ΔE 分兩行（Modal 時代是橫排一行）。
+ * 這塊自己捲，輸入框與說明留在上方不動。 */
+.nearest-results { flex: 1 1 auto; overflow-y: auto; padding: 8px 12px 24px; }
 .nearest-row {
-  display: flex; align-items: center; gap: 10px;
-  border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
-  padding: 6px 10px; cursor: pointer; transition: border-color .15s;
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  border: 1px solid var(--border); border-radius: 10px; background: transparent;
+  padding: 6px; margin-bottom: 6px; cursor: pointer;
+  transition: background .12s, border-color .12s;
 }
 .nearest-row:hover { border-color: var(--accent); }
+.nearest-row.active { border-color: var(--accent); background: var(--chip-hover, rgba(127,127,127,.12)); }
 .nr-swatch {
-  flex: 0 0 auto; width: 88px; height: 34px; border-radius: 7px;
+  flex: 0 0 auto; width: 76px; height: 42px; border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(0,0,0,.10);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 /* 色塊上文字前景固定用 pickTextColor 的 inline 值（materialize-dark 裸 span 坑：color:inherit 搶回） */
 .nr-swatch .nr-code { color: inherit; font-size: .72rem; font-weight: 600; letter-spacing: .3px; }
-.nr-name { flex: 1; font-size: .84rem; color: var(--text);
+.nr-meta { min-width: 0; flex: 1 1 auto; }
+.nr-name { display: block; font-size: .84rem; color: var(--text);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nr-sub { display: flex; gap: 8px; align-items: center; margin-top: 3px; }
 .nr-hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .76rem; color: var(--muted); }
 .nr-de {
   font-size: .72rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border);
-  color: var(--muted); white-space: nowrap;
+  color: var(--muted); white-space: nowrap; flex: 0 0 auto;
 }
 .nr-de.band-very { color: #37b26b; border-color: #37b26b; }
 .nr-de.band-close { color: #26a69a; border-color: #26a69a; }
 .nr-de.band-noticeable { color: #f0ad4e; border-color: #f0ad4e; }
-.nearest-empty { color: var(--muted); font-size: .84rem; padding: 12px 0; }
+.nearest-empty { color: var(--muted); font-size: .84rem; padding: 12px 6px; }
 
 /* ===== CSS 匯出 Modal ===== */
 .css-modal { border-radius: 14px; max-width: 720px; }

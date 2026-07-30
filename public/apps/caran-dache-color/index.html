@@ -42,6 +42,29 @@
 
 <body data-i18n-doctitle="title.page">
 
+  <!-- ===== 最接近色側欄（結果由 JS 填入；形制同 markdown-reader 的檔案清單側欄） =====
+       原本是 Modal，但比對是「查一次 → 讀一張色票 → 再回來看第二名」的動作，
+       Modal 一次只能站一個：點結果得先關掉它（還要等收合動畫）才能開明細，
+       查詢條件也跟著沒了。側欄常駐後明細疊在它上面開，關掉就回到同一份清單。 -->
+  <ul id="nearest-panel" class="sidenav nearest-panel" style="width: 360px;">
+    <li>
+      <a class="subheader">
+        <i class="material-icons">colorize</i>
+        <span data-i18n="nearest.title">找最接近的 Caran d’Ache 色</span>
+      </a>
+    </li>
+    <li><div class="divider"></div></li>
+    <li>
+      <div class="nearest-input-row">
+        <input type="color" id="nearest-picker" value="#aa3f1c" />
+        <input type="text" id="nearest-hex" value="#aa3f1c" maxlength="7" spellcheck="false" autocomplete="off" />
+      </div>
+      <div class="nearest-sub" data-i18n="nearest.sub">以 CIEDE2000（ΔE00）感知色差比對全系列；PSTC 與 PSTP 同盤、不重複列出</div>
+    </li>
+    <li><div class="divider"></div></li>
+    <div id="nearest-results" class="nearest-results"></div>
+  </ul>
+
   <main>
     <div class="app-container">
 
@@ -122,22 +145,6 @@
           <div id="detail-cross-note" class="cross-note"></div>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect btn-flat" data-i18n="detail.close">關閉</a>
-    </div>
-  </div>
-
-  <!-- ===== 最接近色比對 Modal（nearestCDA；內容由 JS 填入） ===== -->
-  <div id="nearest-modal" class="modal nearest-modal">
-    <div class="modal-content">
-      <h5 data-i18n="nearest.title">找最接近的 Caran d’Ache 色</h5>
-      <div class="nearest-sub" data-i18n="nearest.sub">以 CIEDE2000（ΔE00）感知色差比對全系列；PSTC 與 PSTP 同盤、不重複列出</div>
-      <div class="nearest-input-row">
-        <input type="color" id="nearest-picker" value="#aa3f1c" />
-        <input type="text" id="nearest-hex" value="#aa3f1c" maxlength="7" spellcheck="false" autocomplete="off" />
-      </div>
-      <div id="nearest-results" class="nearest-results"></div>
     </div>
     <div class="modal-footer">
       <a href="#!" class="modal-close waves-effect btn-flat" data-i18n="detail.close">關閉</a>

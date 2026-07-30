@@ -57,7 +57,8 @@ node a3-export.js --write    # 由 DB 重新產生
 驗證（preview 實跑）：`/` 302、資產 200、`cda-*.js` 200、API 404 回 JSON、系列網格渲染、
 系列 chips 切換、**「全部」chip（812 色、色塊右上標系列 id）**、搜尋過濾、排序側鍵、
 點色票開明細（4 種複製格式 + 耐光度 + 色料 + WCAG）、
-**同色碼跨系列色帶 + 點系列跳轉**、正典色碼模式（227）、CSS 匯出/下載、i18n 三語、主題切換
+**同色碼跨系列色帶 + 點系列跳轉**、正典色碼模式（227）、**最接近色側欄**（12 筆、ΔE 分級標示、
+點結果開明細而側欄不關）、CSS 匯出/下載、i18n 三語、主題切換
 （**色票保留真實顏色、只有外殼跟主題**）。
 
 ## 本 app 的 canon 重點
@@ -83,7 +84,9 @@ node a3-export.js --write    # 由 DB 重新產生
   比照 FC 的 `nearestFC`，消費端要用時複製 lib＋`data/cda-colors.js`）/ `pickTextColor`（WCAG 對比選黑白字）/
   `contrastRatio` / `slug` / `copyValue` / **`buildCss`**，**純邏輯不碰 DOM**；`caran-dache-color.js`
   才是碰 DOM 的控制器（渲染、模式/系列/排序側鍵、色系分群 sticky 標頭、Modal、跨系列跳轉、
-  **最接近色 Modal**〔`#setting-nearest`；兩 modal 交接需延遲 ~300ms 再開〕、clipboard、toast）。
+  **最接近色側欄**〔`#setting-nearest`；2026-07-30 由 Modal 改為右緣 sidenav，形制同 markdown-reader
+  的檔案清單側欄——查詢條件常駐、點結果開明細而側欄不關。「兩 modal 交接需延遲 ~300ms」那條坑
+  在這條路徑上隨之消失，但對 modal ↔ modal 仍成立〕、clipboard、toast）。
 - **色票不隨主題重著色**（§4.7「內容本身即設計」）：色塊恆為 Caran d’Ache 真實色，
   只有外殼（bg/文字/工具列）跟 light/dark；色塊上文字黑白由 `pickTextColor` 依對比自動選。
 - **色名是資料**：英文正典色名保留於 `CDA_COLORS` / `CDA_CANONICAL`，為主要顯示；明細內另把

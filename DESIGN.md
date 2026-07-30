@@ -188,10 +188,15 @@ Pablo ★–★★★），與總表矛盾。抽取可信度已驗證：目錄�
     top-N 出現成對重複；`opts.series`（字串/陣列）可明確指定要比對的系列（此時不再排除）、`opts.colors` 自備清單。
   - 回傳 `[{seriesId, code, name, hex, cssVar, deltaE, band}]` 依 ΔE 升冪；`deltaEBand` 級距與 FC 同制
     （very ≤2／close ≤5／noticeable ≤10／far）。Lab 依 colors 陣列 identity 快取。
-  - **本 app 另附 UI**（FC 沒有的）：側鍵 `#setting-nearest`（`colorize`）開 Modal——原生 color picker ＋ hex
-    輸入雙向同步 → top-10 結果列（色塊/系列·碼/色名/hex/ΔE 帶色徽章），點列跳該系列色明細。
-    **坑：兩個 Materialize modal 交接要延遲**——`nearestModal.close()` 後立刻 `detailModal.open()` 會被收合
-    動畫的 overlay 收尾波及而閉合，`setTimeout ~300ms` 再開（收進本 app 慣例）。
+  - **本 app 另附 UI**：側鍵 `#setting-nearest`（`colorize`）開**右緣側欄**——原生 color picker ＋ hex
+    輸入雙向同步 → top-12 結果列（色塊/系列·碼/色名/hex/ΔE 帶色徽章），點列開該系列色明細。
+  - **2026-07-30：由 Modal 改為側欄**（三支色彩 registry 同步收斂，形制沿用 `markdown-reader` 的
+    檔案清單側欄）。理由是**流程**不是版面：比對是「查一次、逐一讀」的動作，Modal 一次只能站一個，
+    點結果得先關掉它、查詢條件也跟著沒了。側欄常駐後明細疊在它上面開，關掉就回到同一份清單並保留高亮。
+    **順帶消掉一個坑**：原本「兩個 Materialize modal 交接要 `setTimeout ~300ms`」
+    （`nearestModal.close()` 後立刻 `detailModal.open()` 會被收合動畫的 overlay 收尾波及而閉合）
+    在這條路徑上不再存在——側欄與 Modal 不是同一類元件，沒有交接問題。
+    **那條慣例對「modal ↔ modal」仍然成立**，只是這裡不再走那條路。
   - **消費端已接（2026-07-22）**：`color-palette`／`thangka-trace` 已比照 FC 慣例**複製** lib＋`data/cda-colors.js`，
     在各自的三個 FC 露出點（清單列徽章／loupe·取色列第二行／`.md` 匯出加「≈ Caran d’Ache」欄）並列呈現；
     color-palette 另用 cda-colors 內建的 `nameZh`/`nameJa` 做色名在地化。本 lib 改版後記得同步兩個複製點。

@@ -35,7 +35,7 @@
              hex: c.avgHex, r: rgb.r, g: rgb.g, b: rgb.b, seriesCount: c.seriesCount, _c: c };
   }).filter(Boolean);
 
-  var $grid, $noResult, $count, $search, $chips, detailModal, cssModal, nearestModal;
+  var $grid, $noResult, $count, $search, $chips, detailModal, cssModal, nearestPanel;
   var mode = 'series';
   var ALL_SERIES = '*';     // 「全部」chip 的 activeSeries 值（不是一個真的系列 id）
   var activeSeries = (META.seriesOrder && META.seriesOrder[0]) || (SERIES[0] && SERIES[0].id) || 'LUM';
@@ -310,15 +310,18 @@
       $('#nearest-results').html('<div class="nearest-empty">' + esc(T('nearest.invalid')) + '</div>');
       return;
     }
-    var rows = Lib.nearestCDA(rgb, { n: 10 });
+    // 側欄比 Modal 高，故由 10 筆放寬到 12 筆（已依 ΔE 升冪，看到哪裡由使用者決定）
+    var rows = Lib.nearestCDA(rgb, { n: 12 });
     $('#nearest-results').html(rows.map(function (m) {
       var fg = Lib.pickTextColor(Lib.hexToRgb(m.hex));
       return '<div class="nearest-row" data-series="' + esc(m.seriesId) + '" data-code="' + esc(m.code) + '">' +
         '<span class="nr-swatch" style="background:' + esc(m.hex) + ';color:' + fg + '">' +
           '<span class="nr-code">' + esc(m.seriesId) + '·' + esc(m.code) + '</span></span>' +
-        '<span class="nr-name">' + esc(m.name) + '</span>' +
-        '<span class="nr-hex">' + esc(m.hex) + '</span>' +
-        '<span class="nr-de band-' + m.band + '">ΔE ' + m.deltaE.toFixed(1) + ' · ' + esc(T('band.' + m.band)) + '</span>' +
+        '<span class="nr-meta">' +
+          '<span class="nr-name">' + esc(m.name) + '</span>' +
+          '<span class="nr-sub"><span class="nr-hex">' + esc(m.hex) + '</span>' +
+          '<span class="nr-de band-' + m.band + '">ΔE ' + m.deltaE.toFixed(1) + ' · ' + esc(T('band.' + m.band)) + '</span></span>' +
+        '</span>' +
       '</div>';
     }).join(''));
   }
@@ -353,7 +356,7 @@
     renderChips();
     applyFilter();
     if (current && detailModal && detailModal.isOpen) reopenCurrent();
-    if (nearestModal && nearestModal.isOpen) renderNearest();
+    if (nearestPanel && nearestPanel.isOpen) renderNearest();
   }
 
   // ---- 啟動 ----------------------------------------------------------------
@@ -363,7 +366,12 @@
 
     detailModal = M.Modal.init(document.getElementById('detail-modal'), { dismissible: true });
     cssModal = M.Modal.init(document.getElementById('css-modal'), { dismissible: true });
-    nearestModal = M.Modal.init(document.getElementById('nearest-modal'), { dismissible: true });
+    nearestPanel = M.Sidenav.init(document.getElementById('nearest-panel'), {
+      edge: 'right',
+      // 側欄開啟時把整排側鍵淡出（共用 side-tool.css 的 body.sidenav-open）
+      onOpenStart: function () { document.body.classList.add('sidenav-open'); },
+      onCloseEnd: function () { document.body.classList.remove('sidenav-open'); }
+    });
 
     try {
       var sv = localStorage.getItem(LS_SORT); if (sv && Lib.SORT_MODES.indexOf(sv) !== -1) sortMode = sv;
@@ -398,7 +406,7 @@
     });
 
     // 最接近色比對
-    $('#setting-nearest').on('click', function () { renderNearest(); nearestModal.open(); });
+    $('#setting-nearest').on('click', function () { renderNearest(); nearestPanel.open(); });
     $('#nearest-picker').on('input', function () { $('#nearest-hex').val(this.value); renderNearest(); });
     $('#nearest-hex').on('input', function () {
       var rgb = Lib.hexToRgb(this.value.trim());
@@ -406,12 +414,13 @@
         ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1));
       renderNearest();
     });
+    // 側欄不關：明細 Modal 疊在它上面開，看完退回來還在同一份結果上，
+    // 並留著剛才點過那列的高亮。（Modal 時代要先關再等 300ms 收合動畫，那條坑隨之消失。）
     $('#nearest-results').on('click', '.nearest-row', function () {
-      var sid = $(this).attr('data-series'), code = $(this).attr('data-code');
-      nearestModal.close();
-      // Materialize modal 收合動畫 ~250ms；立刻 open 另一個 modal 會被 overlay 收尾波及而閉合，
-      // 等收合完再開（同一坑：兩個 modal 交接一律延遲）。
-      setTimeout(function () { openSeriesDetail(sid, code); }, 300);
+      var $row = $(this);
+      $('#nearest-results .nearest-row').removeClass('active');
+      $row.addClass('active');
+      openSeriesDetail($row.attr('data-series'), $row.attr('data-code'));
     });
 
     $('#setting-css').on('click', openCss);
