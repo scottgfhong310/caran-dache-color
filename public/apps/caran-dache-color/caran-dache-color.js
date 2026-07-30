@@ -302,6 +302,41 @@
   }
 
   // ---- 最接近色比對（nearestCDA） ------------------------------------------
+
+  // 從一段文字裡認出顏色。**認得本 app 自己複製出去的格式**——明細的複製鈕給的是
+  // `var(--cda-lum-470)` / `#a4c64e` / `rgb(164, 198, 78)` / `.cda-bg-lum-470`，
+  // 其中 hex 與 rgb() 都在這裡吃得下；也認得夾在一整行 CSS 裡的 hex。
+  // 認不出來就回 null，由呼叫端說明，**不猜、也不默默套一個顏色**。
+  function parseColorText(text) {
+    var v = String(text || '').trim();
+    if (!v) return null;
+    var m = /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i.exec(v);
+    if (m) {
+      var n = [+m[1], +m[2], +m[3]];
+      if (n.every(function (x) { return x <= 255; })) {
+        return '#' + n.map(function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+      }
+    }
+    m = /(?:^|[^0-9a-z])#?([0-9a-f]{6})(?![0-9a-z])/i.exec(v);
+    if (m) return '#' + m[1].toLowerCase();
+    m = /(?:^|[^0-9a-z])#([0-9a-f]{3})(?![0-9a-z])/i.exec(v);   // 三碼一律要 #，否則 812／227 這種數字也會中
+    if (m) return '#' + m[1].toLowerCase().split('').map(function (c) { return c + c; }).join('');
+    return null;
+  }
+
+  function pasteFromClipboard() {
+    var fail = function () { M.toast({ html: T('toast.pasteFail'), classes: 'red' }); };
+    if (!navigator.clipboard || !navigator.clipboard.readText) return fail();
+    navigator.clipboard.readText().then(function (txt) {
+      var hex = parseColorText(txt);
+      if (!hex) { M.toast({ html: T('toast.pasteNoColor'), classes: 'orange' }); return; }
+      $('#nearest-hex').val(hex);
+      $('#nearest-picker').val(hex);
+      renderNearest();
+      M.toast({ html: T('toast.pasted', { v: hex }), classes: 'teal' });
+    }).catch(fail);
+  }
+
   function renderNearest() {
     var hexv = $('#nearest-hex').val().trim();
     var rgb = Lib.hexToRgb(hexv);
@@ -407,6 +442,7 @@
 
     // 最接近色比對
     $('#setting-nearest').on('click', function () { renderNearest(); nearestPanel.open(); });
+    $('#nearest-paste').on('click', pasteFromClipboard);
     $('#nearest-picker').on('input', function () { $('#nearest-hex').val(this.value); renderNearest(); });
     $('#nearest-hex').on('input', function () {
       var rgb = Lib.hexToRgb(this.value.trim());

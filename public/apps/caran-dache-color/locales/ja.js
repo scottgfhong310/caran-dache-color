@@ -40,6 +40,7 @@ I18n.register('ja', {
   'nearest.title': '最も近い Caran d’Ache 色を探す',
   'nearest.sub': 'CIEDE2000（ΔE00）知覚色差で全シリーズと照合；PSTC は PSTP と同一パレットのため重複表示しません',
   'nearest.invalid': '有効な #rrggbb を入力してください',
+  'nearest.paste': 'クリップボードから貼り付け',
   'band.very': 'ごく近い',
   'band.close': '近い',
   'band.noticeable': '差が分かる',
@@ -70,6 +71,9 @@ I18n.register('ja', {
 
   'toast.copied': 'コピーしました：{v}',
   'toast.copyFail': 'コピーに失敗しました（localhost または HTTPS が必要）',
+  'toast.pasted': '貼り付けました：{v}',
+  'toast.pasteFail': 'クリップボードを読み取れません（許可されていません）——フィールドに \u2318V で直接貼り付けてください',
+  'toast.pasteNoColor': 'クリップボードに色が見つかりません',
   'toast.cssCopied': 'CSS 全体をコピーしました',
   'toast.downloaded': 'ダウンロード：{n}',
   'toast.lang': '{name} に切り替えました'

@@ -40,6 +40,7 @@ I18n.register('en', {
   'nearest.title': 'Find the nearest Caran d’Ache colour',
   'nearest.sub': 'Perceptual match (CIEDE2000 / ΔE00) across all series; PSTC shares the Pastel Pencils palette and is not listed twice',
   'nearest.invalid': 'Enter a valid #rrggbb',
+  'nearest.paste': 'Paste from clipboard',
   'band.very': 'excellent match',
   'band.close': 'close',
   'band.noticeable': 'noticeable',
@@ -70,6 +71,9 @@ I18n.register('en', {
 
   'toast.copied': 'Copied: {v}',
   'toast.copyFail': 'Copy failed (needs localhost or HTTPS)',
+  'toast.pasted': 'Pasted: {v}',
+  'toast.pasteFail': "Can't read the clipboard (permission denied) — paste into the field with \u2318V instead",
+  'toast.pasteNoColor': 'No colour found in the clipboard',
   'toast.cssCopied': 'Copied full CSS',
   'toast.downloaded': 'Downloaded: {n}',
   'toast.lang': 'Switched to {name}'
