@@ -5,11 +5,11 @@ I18n.register('en', {
   'app.sub': 'Swatches sampled from official colour-chart PDFs — screen approximation, not an official RGB spec',
 
   'search.placeholder': 'Code or colour name…',
-  'search.empty': 'No matching colours',
+  'search.empty': 'No matching colour',
   'count.showing': 'Showing {n} / {total}',
 
   'tool.sort': 'Sort: code / hue / lightness / family / hex',
-  'tool.css': 'View / copy full CSS',
+  'tool.css': 'View / copy the whole CSS',
   'tool.download': 'Download caran_dache_colors.css',
   'tool.mode': 'Toggle light / dark',
   'tool.lang': 'Language',
