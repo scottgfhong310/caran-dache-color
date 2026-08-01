@@ -15,8 +15,10 @@ set -u
 G=/Users/Shared/nodeapp/GitHub
 I=/Users/Shared/nodeapp/InProgress
 SRC=$G/caran-dache-color/public/apps/caran-dache-color
+FAIL=0
 
 echo "=== 1) 整包前端 → InProgress 鏡像 ==="
+mkdir -p "$I/public/apps/caran-dache-color/"
 cp -R "$SRC/." "$I/public/apps/caran-dache-color/"
 
 echo "=== 2) 共用 lib + 資料 → color-palette / thangka-trace（含各自的 InProgress 鏡像）==="
@@ -24,7 +26,7 @@ echo "=== 2) 共用 lib + 資料 → color-palette / thangka-trace（含各自�
 # （cda-series.js／cda-canonical.js 是本 app 的雙軸瀏覽才用得到，不外送）
 for app in color-palette thangka-trace; do
   for dst in "$G/$app/public/apps/$app" "$I/public/apps/$app"; do
-    [ -d "$dst" ] || { echo "  MISSING $dst"; continue; }
+    [ -d "$dst" ] || { echo "  MISSING $dst"; FAIL=1; continue; }
     cp "$SRC/caran-dache-color-lib.js" "$dst/caran-dache-color-lib.js"
     cp "$SRC/data/cda-colors.js"       "$dst/data/cda-colors.js"
   done
@@ -34,7 +36,8 @@ verify() {   # $1=標籤, 其餘=所有複製點
   local label=$1; shift
   local n
   n=$(md5 -r "$@" | awk '{print $1}' | sort -u | wc -l | tr -d ' ')
-  if [ "$n" = "1" ]; then echo "  OK  $label — $# 份單一 hash"; else echo "  MISMATCH  $label — $n 種 hash"; fi
+  if [ "$n" = "1" ]; then echo "  OK        $label — $# 份單一 hash"
+  else echo "  MISMATCH  $label — $n 種 hash"; md5 -r "$@"; FAIL=1; fi
 }
 
 echo
@@ -56,4 +59,13 @@ verify "data/cda-colors.js" \
   "$I/public/apps/thangka-trace/data/cda-colors.js"
 
 echo "=== InProgress 前端整包逐檔比對 ==="
-diff -rq "$SRC" "$I/public/apps/caran-dache-color" && echo "  OK  與獨立版逐檔相同"
+if diff -rq "$SRC" "$I/public/apps/caran-dache-color" > /dev/null; then
+  echo "  OK  與獨立版逐檔相同（$(find "$SRC" -type f | wc -l | tr -d ' ') 個檔）"
+else
+  diff -rq "$SRC" "$I/public/apps/caran-dache-color"
+  FAIL=1
+fi
+
+echo
+if [ "$FAIL" -eq 0 ]; then echo "全部通過。"; else echo "有項目不一致（見上）。"; fi
+exit "$FAIL"
