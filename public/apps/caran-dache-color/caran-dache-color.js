@@ -190,6 +190,17 @@
     return '<tr><td class="fk">' + esc(label) + '</td><td class="fv">' + esc(val) + '</td></tr>';
   }
 
+  /**
+   * 值本身可點的事實列（明細 → 只看這個系列）。形制與 copic-color／enmy-color
+   * 的 `.fact-link` 相同——§11.1 要求四支色彩 registry 的明細卡是同一張卡，
+   * 「可點的值」也不該各長各的。
+   */
+  function factRowLink(label, val, seriesId, hint) {
+    return '<tr><td class="fk">' + esc(label) + '</td><td class="fv">'
+      + '<button type="button" class="fact-link" data-series="' + esc(seriesId) + '"'
+      + ' title="' + esc(hint) + '">' + esc(val) + '</button></td></tr>';
+  }
+
   function openSeriesDetail(seriesId, code) {
     var c = colorByKey[seriesId + '|' + code];
     if (!c) return;
@@ -209,6 +220,11 @@
     }).join('')).show();
 
     var facts = [];
+    // 系列列。色帶頭右下的 `#detail-tag` 本來就寫著系列名，但那是**標籤不是入口**——
+    // 使用者看到「071 屬於 NEO」之後最自然的下一步就是「那 NEO 還有哪些色」，
+    // 而在此之前那一步只能自己回去找 chip。故在事實表補一列、且值可點。
+    facts.push(factRowLink(T('facts.series'), seriesId + ' · ' + sName, seriesId,
+      T('facts.seriesJump')));
     if (c.lf) {
       var lf = c.lf + (c.lfNorm ? ' · ' + T('facts.lfNorm', { v: c.lfNorm }) : '') +
                (c.lfStd ? ' · ' + c.lfStd : '');
@@ -434,6 +450,17 @@
     // 跨系列色帶：點某系列 → 跳到該系列色的明細
     $('#detail-cross').on('click', '.cross-item', function () {
       openSeriesDetail($(this).data('series') + '', $(this).data('code') + '');
+    });
+
+    // 事實表的「系列」值可點 → 關明細、回系列模式並只看那個系列。
+    // ⚠️ 委派**只在這裡綁一次**；別在別處對同一個選擇器再綁一個
+    // （faber-castell-color 就因為兩處各綁一次，點一下同時開新分頁又把本頁導走）。
+    $('#detail-facts').on('click', '.fact-link[data-series]', function () {
+      var id = $(this).data('series') + '';
+      detailModal.close();
+      setMode('series');       // 從正典模式點進來時要先切回系列模式
+      setSeries(id);
+      $search.val(''); applyFilter();
     });
 
     $('#detail-copy').on('click', '.copy-btn', function () {

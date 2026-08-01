@@ -52,6 +52,8 @@ I18n.register('ja', {
 
   'note.approx': 'hex は公式チャートから抽出した画面上の近似値で、公式 RGB 仕様ではありません',
   'note.avg': 'この色番号のシリーズ横断の平均色。各シリーズの実際の hex は下記の帯を参照',
+  'facts.series': 'シリーズ',
+  'facts.seriesJump': 'このシリーズだけを表示',
 
   'facts.lightfastness': '耐光性',
   'facts.lfNorm': '正規化 {v}/5',

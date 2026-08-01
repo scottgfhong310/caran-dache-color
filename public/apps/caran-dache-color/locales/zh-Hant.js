@@ -52,6 +52,8 @@ I18n.register('zh-Hant', {
 
   'note.approx': 'hex 為官方色卡取樣的螢幕近似值，非官方 RGB 規格',
   'note.avg': '此為同色碼跨系列的平均色；各系列實際 hex 見下方色帶',
+  'facts.series': '系列',
+  'facts.seriesJump': '只看這個系列',
 
   'facts.lightfastness': '耐光度',
   'facts.lfNorm': '正規化 {v}/5',

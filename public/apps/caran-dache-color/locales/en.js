@@ -52,6 +52,8 @@ I18n.register('en', {
 
   'note.approx': 'hex is a screen approximation sampled from official charts, not an official RGB spec',
   'note.avg': 'Average colour of this code across series; per-series hex is shown below',
+  'facts.series': 'Series',
+  'facts.seriesJump': 'Show only this series',
 
   'facts.lightfastness': 'Lightfastness',
   'facts.lfNorm': 'normalised {v}/5',
