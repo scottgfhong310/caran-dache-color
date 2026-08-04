@@ -105,6 +105,7 @@ node a3-export.js --write    # 由 DB 重新產生
 | `side-tool.css`（正統 flex 版）| 家族 §5.5 正統版（複製自 `faber-castell-color`） |
 | `filter-clear.css`、`filter-clear.js` | 家族 §5.12 篩選框「清除」× 鈕 utility（自 `faber-castell-color` 複製、byte-identical） |
 | `i18n.js` | 家族 repo `nodeapp-webapp-family/i18n.js`（權威版，byte-identical；`locales/*.js` 各 app 自維護） |
+| `color-family.js` | 家族 repo `nodeapp-webapp-family/color-family.js`（§4 A 類權威版，byte-identical）。**色系分群的單一權威規則**；本 app 的 lib 只包一層薄的 `colorFamily()` 把無彩度門檻寫在那裡。⚠️ `<script>` 必須早於用到它的 lib |
 | `data/cda-*.js` | **由 `db_artcolor` 匯出**（2026-07-29 起；家族美術色材領域庫＝ System of Record）。xlsx ＋ `resampled_hex.json` 等已凍結為來源沿革，見 DESIGN.md §3.1／§4.1 |
 
 > **本 app 是 `caran-dache-color-lib.js` ＋ `data/cda-colors.js` 的權威版**，各有 6 份複製：
