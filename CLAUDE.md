@@ -4,6 +4,9 @@ Caran d’Ache 9 大系列色號 → CSS（hex / `var(--cda-<series>-<code>)` / 
 系列色票網格（「全部」＋ 9 系列 chips）、**系列 / 正典色碼雙軸瀏覽**、點色票看明細（耐光度 / 色料 / WCAG）、
 **同色碼跨系列色帶**（點某系列即跳去看該系列色）、搜尋、一鍵複製四種格式、整份 `.css` 匯出／下載。
 812 系列色 / 227 正典色碼 / 9 系列。
+**第二頁 `sets.html`＝系列收錄對照**（227 × 9 矩陣）：選一條系列 → 只留下它有出的色 →
+橫向看其他系列涵蓋到哪。**格子裡是該系列自己的顏色、不是勾號**——治理 §3.1「同一個正典色碼
+跨系列不是同一個顏色」因此在畫面上直接看得見。
 
 本 app 屬於 **nodeapp WebApp 家族**；共同規範與流程在
 <https://github.com/scottgfhong310/nodeapp-webapp-family>（`DESIGN_GUIDELINES.md` 規範、`WORKFLOW.md` 流程）。**改動前請先讀那兩份，照其中 canon 做。**
@@ -25,6 +28,7 @@ data/reference/                         # 可攜「修正版總表」參考檔�
 scripts/sync-copies.sh                  # 把 lib＋cda-colors.js 同步到 6 個複製點並 md5 驗證
 public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-color/）
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
+├─ sets.html · sets.css · sets.js       # 第二頁：系列收錄對照（227 正典色碼 × 9 系列）
 ├─ data/cda-series.js                   # window.CDA_SERIES（9 系列 registry）
 ├─ data/cda-colors.js                   # window.CDA_COLORS（812 系列色）+ window.CDA_META
 ├─ data/cda-canonical.js                # window.CDA_CANONICAL（227 正典碼 + 同碼跨系列 hex）
@@ -61,6 +65,18 @@ node a3-export.js --write    # 由 DB 重新產生
 點結果開明細而側欄不關）、CSS 匯出/下載、i18n 三語、主題切換
 （**色票保留真實顏色、只有外殼跟主題**）。
 
+`sets.html`（另開分頁，入口在色票頁側鍵第 3 顆 `#setting-sets`）另驗：
+227 列 × 9 欄／**812 個色片**（＝每欄色片數逐條等於 registry 的 `count`）、
+每格 hex 逐格等於 `CDA_CANONICAL[i].series[<系列>]`（**812/812 相符，其中 747 格與正典平均色不同**
+——那正是 §3.1 要看見的事）、選一條系列後可見列數 ＝ 該系列色數且再點一次可取消、
+**缺色數雙向對稱**（base A 時 B 缺 g ⇒ |A|−g ＝ |A∩B|，81 組全過）、
+四列表頭各自 sticky 且不互相疊住、點色片複製 hex（真實滑鼠點擊 → toast）、三語、主題切換。
+
+> ⚠️ **`.matrix-sec` 不可包 `overflow-x: auto`**（形制同 FC／finecolour：整頁橫捲）。
+> 包了就多一個捲動容器，表頭 sticky 的參考點從視窗變成它——結果是**表頭完全不黏，
+> 而 `top: var(--head-h)` 反過來把列標籤整齊往下推 `--head-h` 那麼多**。
+> 畫面上只看得出「有點歪」，不會報錯。已寫進 `sets.css` 的註解。
+
 ## 本 app 的 canon 重點
 
 - **系列 chips 有一顆「全部」**（`activeSeries = '*'`，非真實系列 id）：分組 chips 單選互斥、
@@ -82,7 +98,10 @@ node a3-export.js --write    # 由 DB 重新產生
   `hexToRgb` / `rgbToHsl` / `rgbToLab` / `deltaE`（ΔE00）/ `deltaEBand` /
   **`nearestCDA`（v2 已實作）**——以 ΔE00 找最接近的系列色（預設排除與 PSTP 同盤的 PSTC、`opts.series` 可過濾；
   比照 FC 的 `nearestFC`，消費端要用時複製 lib＋`data/cda-colors.js`）/ `pickTextColor`（WCAG 對比選黑白字）/
-  `contrastRatio` / `slug` / `copyValue` / **`buildCss`**，**純邏輯不碰 DOM**；`caran-dache-color.js`
+  `contrastRatio` / `slug` / `copyValue` / **`buildCss`** /
+  **`codesInSeries`／`seriesGaps`／`seriesMatrix`**（`sets.html` 用的三支：某系列有哪些正典碼、
+  相對基準系列各欄缺幾色、227×9 矩陣——**`cells[系列]` 放的是該系列的實際 hex 而不是布林**），
+  **純邏輯不碰 DOM**；`caran-dache-color.js`
   才是碰 DOM 的控制器（渲染、模式/系列/排序側鍵、色系分群 sticky 標頭、Modal、跨系列跳轉、
   **最接近色側欄**〔`#setting-nearest`；2026-07-30 由 Modal 改為右緣 sidenav，形制同 markdown-reader
   的檔案清單側欄——查詢條件常駐、點結果開明細而側欄不關。「兩 modal 交接需延遲 ~300ms」那條坑

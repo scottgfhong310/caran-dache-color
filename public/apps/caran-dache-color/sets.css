@@ -1,0 +1,173 @@
+/* sets.css — 系列收錄對照頁（sets.html）
+ * 主題 token 沿用 caran-dache-color.css，本檔只加這頁特有的樣式。
+ * **版面形制對齊 faber-castell-color/sets.css 與 finecolour-color/sets.css**
+ * （固定 Header ＋ 各列自己 sticky 的表頭 ＋ 不包捲動外框、表格直接接在頁面上）。
+ *
+ * 與那兩支的差別只有一處，但它是這一頁存在的理由：
+ * **格子裡是色片不是圓點**——CDA 同色碼跨系列是不同顏色，格子直接畫該系列的實際色。
+ * 所以欄寬比它們寬（30px → 34px），列高也高一點，讓顏色看得出來。
+ *
+ * 色片一律保留 Caran d'Ache 真實顏色、不隨主題重著色（本 app canon，§4.7）。
+ */
+
+.app-container.wide { width: 94%; max-width: 1400px; }
+
+/* ===== 固定 Header ===== */
+/* 高度會隨語言與換行變動，由 JS 量出來寫進 --head-h；表頭各列黏在它下面。 */
+.page-head {
+  position: sticky; top: 0; z-index: 6;
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 14px 0 12px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.head-title h1 { font-size: 1.18rem; font-weight: 500; margin: 0; color: var(--text); }
+.head-title .sub { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+
+/* 目前基準系列 */
+.picked { margin-left: auto; display: flex; align-items: center; gap: 8px; min-height: 30px; }
+.picked-hint { font-size: .78rem; color: var(--muted); }
+.picked-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid var(--accent); border-radius: 999px;
+  padding: 4px 6px 4px 12px; font-size: .8rem; color: var(--text);
+}
+.picked-name { font-weight: 500; }
+.picked-n { color: var(--muted); font-size: .74rem; }
+.picked-clear {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: none; border: 0; cursor: pointer; color: var(--muted); padding: 0;
+}
+.picked-clear:hover { color: var(--text); background: rgba(128,128,128,.18); }
+.picked-clear .material-icons { font-size: 16px; }
+
+.legend { font-size: .76rem; color: var(--muted); margin: 0 0 8px; }
+/* ⚠️ 這裡**不能**包 `overflow-x: auto`（形制同 faber-castell-color／finecolour-color：整頁橫捲）。
+   一旦包了就多一個捲動容器，表頭的 sticky 參考點會從視窗變成它——結果是表頭完全不黏，
+   而 `top: var(--head-h)` 反而把列標籤整齊往下推 --head-h 那麼多。畫面看起來只是「有點歪」。 */
+.matrix-foot { font-size: .74rem; color: var(--muted); margin: 10px 0 28px; }
+
+/* ===== 矩陣 ===== */
+/* Materialize 的 `table { width:100% }` 會把表格撐滿、多的寬度全被第一欄吸走；
+   `table th,td { padding:15px 5px }` 會把每格撐到 47px。兩條都要先歸零。 */
+.assort { width: max-content; border-collapse: separate; border-spacing: 0; font-size: .76rem; }
+.assort th, .assort td { padding: 0; border-bottom: 1px solid var(--border); }
+
+/* --- 表頭：四列各自 sticky，top 由前面列的高度累加推導 ---
+   高度與 top 一定要同源，否則改了高度忘了改 top，表頭就會互相疊住。 */
+.assort {
+  --h-series: 152px;   /* 系列名（直排，最長是 SUPRACOLOR Soft Aquarelle） */
+  --h-grade: 22px;     /* 等級 */
+  --h-size: 24px;      /* 色數 */
+  --w-color: 216px;    /* 第一欄（色票＋色號＋色名） */
+  --w-col: 34px;       /* 每條系列欄的寬度——比 FC／finecolour 寬，因為格子裡是色片 */
+}
+.assort thead th, .assort thead td {
+  position: sticky; z-index: 3;
+  background: var(--surface-2); color: var(--text);
+  font-weight: 500; text-align: center;
+}
+.assort thead .r-series th { top: var(--head-h, 0px); height: var(--h-series); }
+.assort thead .r-grade th  { top: calc(var(--head-h, 0px) + var(--h-series)); height: var(--h-grade); }
+.assort thead .r-size th   { top: calc(var(--head-h, 0px) + var(--h-series) + var(--h-grade)); height: var(--h-size); }
+/* 列標籤是 <th>、資料格是 <td>，兩者都要給 top——只寫 td 的話標籤不黏、會自己捲走 */
+.assort thead .r-gap th,
+.assort thead .r-gap td    { top: calc(var(--head-h, 0px) + var(--h-series) + var(--h-grade) + var(--h-size)); height: var(--h-size); }
+
+/* 系列名直排：欄寬只有 34px，橫排一定塞不下（SUPRACOLOR Soft Aquarelle…） */
+.assort thead .c-series { border-left: 1px solid var(--border); }
+.assort thead .c-series .vtext {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  display: inline-block; max-height: calc(var(--h-series) - 10px);
+  overflow: hidden; font-size: .72rem; color: var(--text); font-weight: 500;
+}
+/* 等級格：內容一律鎖成一行。
+ * ⚠️ 這一列的高度**不能**由內容決定——後面幾列的 sticky top 是用上面宣告的 --h-* 累加的，
+ * 內容一撐高，下一列就會疊上來。全文放 title。 */
+.assort thead .c-grade {
+  font-size: .68rem; color: var(--muted); font-weight: 400;
+  border-left: 1px solid var(--border);
+  height: var(--h-grade); overflow: hidden;
+}
+.assort thead .c-grade > span {
+  display: block; max-width: calc(var(--w-col) - 4px); margin: 0 auto;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.assort .c-size {
+  width: var(--w-col); min-width: var(--w-col); cursor: pointer;
+  font-family: ui-monospace, monospace; font-size: .72rem; color: var(--muted);
+  border-left: 1px solid var(--border);
+}
+.assort .c-size:hover { color: var(--accent); }
+.assort .c-size.is-picked { background: var(--accent); color: var(--accent-on); }
+
+/* 第 4 列：相對基準系列還缺幾色（只有選了基準才出現） */
+.assort thead .r-gap td {
+  font-family: ui-monospace, monospace; font-size: .72rem; color: var(--muted);
+  border-left: 1px solid var(--border);
+}
+.assort thead .r-gap td.is-full { color: #37b26b; }               /* 0 ＝ 完全涵蓋 */
+.assort thead .r-gap td.is-picked { background: var(--accent); color: var(--accent-on); }
+/* 底線畫在表頭的最後一列 */
+.assort:not(.has-gap) thead .r-size th { box-shadow: inset 0 -1px 0 var(--border); }
+.assort.has-gap thead .r-gap td { box-shadow: inset 0 -1px 0 var(--border); }
+
+/* 表頭最左欄放列名（系列／等級／色） */
+.assort thead .r-label {
+  text-align: right; padding-right: 10px; font-size: .72rem; color: var(--muted); font-weight: 400;
+  white-space: nowrap;
+}
+
+/* --- 第一欄：色，sticky 在左 ---
+   欄寬用變數：table 的 auto layout 只把 <th> 的 width 當建議值，實際取各列 min-content
+   的最大值（色名 nowrap 就是整串名字的寬度）。限制要同時下在儲存格與內層 flex 上。 */
+.assort .c-color {
+  position: sticky; left: 0; z-index: 2;
+  background: var(--surface); text-align: left; font-weight: 400;
+  width: var(--w-color); min-width: var(--w-color); padding: 3px 10px 3px 8px;
+  display: table-cell; white-space: nowrap;
+}
+.assort thead .c-color { z-index: 4; background: var(--surface-2); vertical-align: bottom; }
+.assort tbody .ccell { max-width: calc(var(--w-color) - 18px); }
+.assort tbody tr:hover .c-color { background: var(--surface-2); }
+.assort tbody tr:hover td.cell { background: rgba(128,128,128,.10); }
+
+/* 用 flex 包住色票與色名，列高才等於「最高的子元素＋padding」；
+   兩個 inline 元素直接放進 <th> 會被行高／descender 撐高。 */
+.assort .ccell { display: flex; align-items: center; gap: 8px; line-height: 1.15; }
+.assort .mini {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 52px; height: 20px; border-radius: 4px;
+  font-family: ui-monospace, monospace; font-size: .68rem; font-weight: 700;
+  box-shadow: inset 0 0 0 1px rgba(128,128,128,.28);
+}
+/* 色塊上的字色由 pickTextColor 算出、寫在父元素 inline style；materialize-dark 對裸 span
+   的 color 會蓋掉它（§5.1 坑），故強制繼承 */
+.assort .mini, .assort .mini span { color: inherit; }
+.assort .cname {
+  color: var(--text); font-size: .76rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+}
+
+/* --- 資料格：色片，不是圓點 --- */
+.assort td.cell {
+  width: var(--w-col); min-width: var(--w-col); height: 24px; text-align: center;
+  border-left: 1px solid var(--border);
+}
+.assort .swatch {
+  display: inline-block; width: 26px; height: 16px; border-radius: 3px;
+  border: 0; padding: 0; cursor: pointer; vertical-align: middle;
+  box-shadow: inset 0 0 0 1px rgba(128,128,128,.34);
+}
+.assort .swatch:hover { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+/* 選中的那一欄整條標起來，橫向對照時才定位得到 */
+.assort .is-pickedcell { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+/* 選了基準系列之後，它沒出的列直接不顯示 */
+.assort tbody tr.is-hidden { display: none; }
+
+@media (max-width: 780px) {
+  .picked { margin-left: 0; width: 100%; }
+  .assort { --w-color: 168px; }
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>Caran d’Ache 系列收錄對照</title>
+
+  <!-- App icon / favicon / PWA（設計附件；icons/ 內，一律相對路徑，獨立版與 InProgress 鏡像共用）§5.5 -->
+  <link rel="icon" href="./icons/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" type="image/svg+xml" href="./icons/favicon-light.svg" media="(prefers-color-scheme: light)" />
+  <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./icons/icon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png" />
+  <link rel="manifest" href="./icons/manifest.json" />
+  <meta name="theme-color" content="#0f1115" />
+
+  <!-- 防閃爍：在任何樣式套用前先決定主題（§5.1） -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('caran-dache-color-theme');
+        document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+      } catch (e) { }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="./materialize-dark.css" />
+  <link rel="stylesheet" href="./caran-dache-color.css" />
+  <link rel="stylesheet" href="./sets.css" />
+  <link rel="stylesheet" href="./side-tool.css" />
+</head>
+
+<body data-i18n-doctitle="sets.title">
+  <main>
+    <div class="app-container wide">
+      <!-- 固定 Header：捲動時系列切換與目前基準系列一直看得到（形制同 faber-castell-color／finecolour-color） -->
+      <header class="page-head" id="page-head">
+        <div class="head-title">
+          <h1 data-i18n="sets.title">Caran d’Ache 系列收錄對照</h1>
+          <div class="sub" data-i18n="sets.sub">選一條系列 → 只留下它有出的色 → 橫向看其他系列有沒有涵蓋</div>
+        </div>
+        <div class="picked" id="picked"></div>
+      </header>
+      <div class="legend" data-i18n="sets.legend">
+        ＊ 格子裡是該系列自己的顏色——同一個正典色碼跨系列並不是同一個顏色。點格子複製該系列的 hex
+      </div>
+      <section class="matrix-sec" id="matrix"></section>
+      <p class="matrix-foot" id="matrix-foot"></p>
+    </div>
+  </main>
+  <div class="side-tools">
+    <a id="setting-back" class="side-tool" href="./index.html"
+       data-i18n-title="sets.back" title="回色票頁"><i class="material-icons">grid_on</i></a>
+    <div id="setting-mode" class="side-tool" data-i18n-title="tool.mode" title="切換 light / dark">
+      <i class="material-icons">dark_mode</i>
+    </div>
+    <div id="setting-lang" class="side-tool" data-i18n-title="tool.lang" title="Language">
+      <i class="material-icons">translate</i>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="./color-family.js"></script>   <!-- 共用件：色系分群的單一權威規則（SHARED_LIBRARY_GUIDELINES §4）；必須早於所有用到它的 lib -->
+  <script src="./caran-dache-color-lib.js"></script>
+  <script src="./data/cda-series.js"></script>
+  <script src="./data/cda-colors.js"></script>
+  <script src="./data/cda-canonical.js"></script>
+  <script src="./i18n.js"></script>
+  <script src="./locales/zh-Hant.js"></script>
+  <script src="./locales/en.js"></script>
+  <script src="./locales/ja.js"></script>
+  <script src="./side-tool.js"></script>
+  <script src="./sets.js"></script>
+</body>
+
+</html>
