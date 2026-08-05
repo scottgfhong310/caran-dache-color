@@ -28,6 +28,7 @@ I18n.register('ja', {
   'tool.download': 'caran_dache_colors.css をダウンロード',
   'tool.mode': 'ライト / ダーク切替',
   'tool.lang': '言語',
+  'tool.more': 'その他のツール',
   'tool.clearFilter': 'クリア',
 
   'mode.series': 'シリーズ',

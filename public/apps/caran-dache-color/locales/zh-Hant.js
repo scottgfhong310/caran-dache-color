@@ -28,6 +28,7 @@ I18n.register('zh-Hant', {
   'tool.download': '下載 caran_dache_colors.css',
   'tool.mode': '切換 light / dark',
   'tool.lang': '語言',
+  'tool.more': '更多工具',
   'tool.clearFilter': '清除',
 
   'mode.series': '系列',
