@@ -25,7 +25,7 @@ data/source/                            # 單一真相（建置期用，不進�
 ├─ catalogue_lightfastness.json         # 耐光度修正（code→星數；generate.py 覆蓋 lf/lfNorm）
 └─ build_corrected_xlsx.py              # 把 hex＋耐光度修正套回整份 xlsx → data/reference/…v1.1.0-corrected.xlsx
 data/reference/                         # 可攜「修正版總表」參考檔（＋README）；DESIGN.md §4.1
-scripts/sync-copies.sh                  # 把 lib＋cda-colors.js 同步到 6 個複製點並 md5 驗證
+scripts/sync-copies.sh                  # 把 lib＋cda-colors.js 同步到 8 個複製點並 md5 驗證
 public/apps/caran-dache-color/          # 前端（服務於 /apps/caran-dache-color/）
 ├─ index.html · caran-dache-color.css · caran-dache-color.js · caran-dache-color-lib.js
 ├─ sets.html · sets.css · sets.js       # 第二頁：系列收錄對照（227 正典色碼 × 9 系列）
@@ -127,11 +127,13 @@ node a3-export.js --write    # 由 DB 重新產生
 | `color-family.js` | 家族 repo `nodeapp-webapp-family/color-family.js`（§4 A 類權威版，byte-identical）。**色系分群的單一權威規則**；本 app 的 lib 只包一層薄的 `colorFamily()` 把無彩度門檻寫在那裡。⚠️ `<script>` 必須早於用到它的 lib |
 | `data/cda-*.js` | **由 `db_artcolor` 匯出**（2026-07-29 起；家族美術色材領域庫＝ System of Record）。xlsx ＋ `resampled_hex.json` 等已凍結為來源沿革，見 DESIGN.md §3.1／§4.1 |
 
-> **本 app 是 `caran-dache-color-lib.js` ＋ `data/cda-colors.js` 的權威版**，各有 6 份複製：
-> 本尊、`color-palette`、`thangka-trace`，各含 InProgress 鏡像。
+> **本 app 是 `caran-dache-color-lib.js` ＋ `data/cda-colors.js` 的權威版**，各有 8 份複製：
+> 本尊、`color-palette`、`thangka-trace`、`color-mixer`，各含 InProgress 鏡像。
+> （`color-mixer` 是 2026-08-07 接上的第三個消費端——它同時借五個品牌的 lib＋資料做跨品牌比對。）
 > 同步與驗證用 `bash scripts/sync-copies.sh`（會 md5 確認每份都是單一 hash）。
 > 該腳本於 2026-07-29 補上——A5 把資料改由 `db_artcolor` 匯出時，6 份複製一次全部過時，
 > 才發現本 repo 缺這支（FC 早有）。
+> （這裡的「6 份」是**當時**的事實，刻意不改成 8——它是歷史敘述不是現行指示。）
 
 > 為什麼長這樣（唯讀決策、資料來源與雙軸模型、跨系列色帶、色名顯示、CSS 單一真相、色票不著色）
 > 見 [DESIGN.md](DESIGN.md)。

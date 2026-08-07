@@ -199,7 +199,9 @@ Pablo ★–★★★），與總表矛盾。抽取可信度已驗證：目錄�
     **那條慣例對「modal ↔ modal」仍然成立**，只是這裡不再走那條路。
   - **消費端已接（2026-07-22）**：`color-palette`／`thangka-trace` 已比照 FC 慣例**複製** lib＋`data/cda-colors.js`，
     在各自的三個 FC 露出點（清單列徽章／loupe·取色列第二行／`.md` 匯出加「≈ Caran d’Ache」欄）並列呈現；
-    color-palette 另用 cda-colors 內建的 `nameZh`/`nameJa` 做色名在地化。本 lib 改版後記得同步兩個複製點。
+    color-palette 另用 cda-colors 內建的 `nameZh`/`nameJa` 做色名在地化。
+    **2026-08-07 起第三個消費端 `color-mixer` 也接上**（跨五品牌比對）。
+    本 lib 改版後**跑 `bash scripts/sync-copies.sh`**（三個消費端、共 8 份複製），別手動 `cp`。
 
 ## 7. buildCss 的變數命名（跨系列同碼的必然）
 

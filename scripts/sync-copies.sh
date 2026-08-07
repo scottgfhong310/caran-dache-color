@@ -2,7 +2,7 @@
 # sync-copies.sh — 把本 repo 的權威版同步到所有登記的複製點，並以 md5 驗證。
 #
 # 權威版＝ GitHub/caran-dache-color。複製點見 CLAUDE.md 的「複製件登記」：
-#   caran-dache-color-lib.js ＋ data/cda-colors.js → color-palette / thangka-trace
+#   caran-dache-color-lib.js ＋ data/cda-colors.js → color-palette / thangka-trace / color-mixer
 #   整包前端 → InProgress 鏡像
 #
 # 比照 faber-castell-color/scripts/sync-copies.sh（同一套形狀）。
@@ -21,10 +21,10 @@ echo "=== 1) 整包前端 → InProgress 鏡像 ==="
 mkdir -p "$I/public/apps/caran-dache-color/"
 cp -R "$SRC/." "$I/public/apps/caran-dache-color/"
 
-echo "=== 2) 共用 lib + 資料 → color-palette / thangka-trace（含各自的 InProgress 鏡像）==="
-# 這兩支消費端只用 nearestCDA，故只需 lib ＋ cda-colors.js
+echo "=== 2) 共用 lib + 資料 → color-palette / thangka-trace / color-mixer（含各自的 InProgress 鏡像）==="
+# 這三支消費端只用 nearestCDA，故只需 lib ＋ cda-colors.js
 # （cda-series.js／cda-canonical.js 是本 app 的雙軸瀏覽才用得到，不外送）
-for app in color-palette thangka-trace; do
+for app in color-palette thangka-trace color-mixer; do
   for dst in "$G/$app/public/apps/$app" "$I/public/apps/$app"; do
     [ -d "$dst" ] || { echo "  MISSING $dst"; FAIL=1; continue; }
     cp "$SRC/caran-dache-color-lib.js" "$dst/caran-dache-color-lib.js"
@@ -48,7 +48,9 @@ verify "caran-dache-color-lib.js" \
   "$G/thangka-trace/public/apps/thangka-trace/caran-dache-color-lib.js" \
   "$I/public/apps/caran-dache-color/caran-dache-color-lib.js" \
   "$I/public/apps/color-palette/caran-dache-color-lib.js" \
-  "$I/public/apps/thangka-trace/caran-dache-color-lib.js"
+  "$I/public/apps/thangka-trace/caran-dache-color-lib.js" \
+  "$G/color-mixer/public/apps/color-mixer/caran-dache-color-lib.js" \
+  "$I/public/apps/color-mixer/caran-dache-color-lib.js"
 
 verify "data/cda-colors.js" \
   "$SRC/data/cda-colors.js" \
@@ -56,7 +58,9 @@ verify "data/cda-colors.js" \
   "$G/thangka-trace/public/apps/thangka-trace/data/cda-colors.js" \
   "$I/public/apps/caran-dache-color/data/cda-colors.js" \
   "$I/public/apps/color-palette/data/cda-colors.js" \
-  "$I/public/apps/thangka-trace/data/cda-colors.js"
+  "$I/public/apps/thangka-trace/data/cda-colors.js" \
+  "$G/color-mixer/public/apps/color-mixer/data/cda-colors.js" \
+  "$I/public/apps/color-mixer/data/cda-colors.js"
 
 echo "=== InProgress 前端整包逐檔比對 ==="
 if diff -rq "$SRC" "$I/public/apps/caran-dache-color" > /dev/null; then
