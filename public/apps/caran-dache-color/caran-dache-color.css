@@ -143,7 +143,7 @@ main { min-height: 100vh; }
   padding: 6px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .cda-swatch .code { font-size: .82rem; font-weight: 600; }
-.cda-swatch .badge {
+.cda-swatch .cda-badge {
   display: inline-flex; align-items: center; justify-content: center;  /* 數字在彈丸內水平垂直置中 */
   font-size: .68rem; opacity: .9; font-weight: 600;
   border: 1px solid currentColor; border-radius: 20px;
@@ -153,7 +153,7 @@ main { min-height: 100vh; }
 /* 色塊上的號碼/標記：前景固定用 pickTextColor（依色塊自身相對亮度算）的值，與主題無關。
  * color:inherit 從 inline 前景繼承、並以較高特異度蓋過 materialize-dark.css 對裸 <span>
  * 設的 color:var(--mz-text)——否則在淺色塊上會看不見（DESIGN.md）。 */
-.cda-swatch .code, .cda-swatch .badge,
+.cda-swatch .code, .cda-swatch .cda-badge,
 .detail-head .d-code, .detail-head .d-tag,
 .cross-item .cs-sid, .cross-item .cs-hex { color: inherit; }
 .cda-meta { padding: 7px 10px 9px; }

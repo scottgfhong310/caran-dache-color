@@ -63,9 +63,9 @@
     // 正典模式標「涵蓋幾個系列」；「全部系列」視圖標系列 id——同一個色碼在不同系列
     // 是**不同的顏色**，攤平成一格網格後不標系列就分不出誰是誰。
     var badge = c.kind === 'canon'
-      ? '<span class="badge" style="color:' + fg + '">' + c.seriesCount + '</span>'
+      ? '<span class="cda-badge" style="color:' + fg + '">' + c.seriesCount + '</span>'
       : (showingAllSeries()
-          ? '<span class="badge" style="color:' + fg + '">' + esc(c.seriesId) + '</span>' : '');
+          ? '<span class="cda-badge" style="color:' + fg + '">' + esc(c.seriesId) + '</span>' : '');
     var key = c.kind === 'canon' ? c.code : (c.seriesId + '|' + c.code);
     return '<div class="cda-cell" data-kind="' + c.kind + '" data-key="' + esc(key) + '">' +
       '<div class="cda-swatch" style="background:' + esc(c.hex) + ';color:' + fg + '">' +
