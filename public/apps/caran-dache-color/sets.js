@@ -218,7 +218,7 @@
           toast(t('toast.copied', '已複製：{v}', { v: hex }).replace('{v}', hex));
         }, function () {
           // 沿用既有的共用 key（§6：它不吃參數，別為了塞 hex 另造一句）
-          toast(t('toast.copyFail', '複製失敗（需 localhost 或 HTTPS）'));
+          toast(t('toast.copyFail', '複製失敗'));
         });
       }
     });
