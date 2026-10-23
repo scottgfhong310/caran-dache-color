@@ -341,16 +341,25 @@
   }
 
   function pasteFromClipboard() {
-    var fail = function () { M.toast({ html: T('toast.pasteFail'), classes: 'red' }); };
-    if (!navigator.clipboard || !navigator.clipboard.readText) return fail();
-    navigator.clipboard.readText().then(function (txt) {
-      var hex = parseColorText(txt);
-      if (!hex) { M.toast({ html: T('toast.pasteNoColor'), classes: 'orange' }); return; }
-      $('#nearest-hex').val(hex);
-      $('#nearest-picker').val(hex);
-      renderNearest();
-      M.toast({ html: T('toast.pasted', { v: hex }), classes: 'teal' });
-    }).catch(fail);
+    // 讀不到剪貼簿（非 HTTPS／非 localhost、或權限被拒）就退一步：把欄位整段選起來交給使用者按 ⌘V，
+    // 由欄位上的 paste 事件接手（同一支 applyPastedText ⇒ 結果與這條路相同）。照 web-launcher 的 pasteField。
+    var manual = function () {
+      var el = document.getElementById('nearest-hex');
+      el.focus();
+      try { el.select(); } catch (e) {}
+      M.toast({ html: T('toast.pasteSelected'), classes: 'orange' });
+    };
+    if (!navigator.clipboard || !navigator.clipboard.readText) return manual();
+    navigator.clipboard.readText().then(applyPastedText).catch(manual);
+  }
+
+  function applyPastedText(txt) {
+    var hex = parseColorText(txt);
+    if (!hex) { M.toast({ html: T('toast.pasteNoColor'), classes: 'orange' }); return; }
+    $('#nearest-hex').val(hex);
+    $('#nearest-picker').val(hex);
+    renderNearest();
+    M.toast({ html: T('toast.pasted', { v: hex }), classes: 'teal' });
   }
 
   function renderNearest() {
@@ -470,6 +479,15 @@
     // 最接近色比對
     $('#setting-nearest').on('click', function () { renderNearest(); nearestPanel.open(); });
     $('#nearest-paste').on('click', pasteFromClipboard);
+    // 使用者自己按 ⌘V／Ctrl+V（任何網址下都有效）：認得出顏色就走貼上鈕同一條路；
+    // 認不出就交給瀏覽器照常貼上，不擋手動編輯
+    $('#nearest-hex').on('paste', function (e) {
+      var cd = e.originalEvent && e.originalEvent.clipboardData;
+      var txt = cd ? cd.getData('text') : '';
+      if (!txt || !parseColorText(txt)) return;
+      e.preventDefault();
+      applyPastedText(txt);
+    });
     $('#nearest-picker').on('input', function () { $('#nearest-hex').val(this.value); renderNearest(); });
     $('#nearest-hex').on('input', function () {
       var rgb = Lib.hexToRgb(this.value.trim());
